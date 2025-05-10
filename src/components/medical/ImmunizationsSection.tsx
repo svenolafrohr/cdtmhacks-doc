@@ -1,19 +1,21 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import EditableSection from './EditableSection';
 
+interface Immunization {
+  patient_id: string;
+  date: string;
+  disease: string;
+  vaccine_name: string;
+  batch_number: string;
+  best_before: string;
+  doctor_name: string;
+  doctor_address: any;
+  details: string;
+}
+
 interface ImmunizationsProps {
-  immunizations: Array<{
-    patient_id: string;
-    date: string;
-    disease: string;
-    vaccine_name: string;
-    batch_number: string;
-    best_before: string;
-    doctor_name: string;
-    doctor_address: any;
-    details: string;
-  }>;
+  immunizations: Array<Immunization> | { [key: string]: any } | null | undefined;
   colorScheme?: {
     bg: string;
     border: string;
@@ -24,12 +26,35 @@ interface ImmunizationsProps {
 }
 
 const ImmunizationsSection: React.FC<ImmunizationsProps> = ({ immunizations, colorScheme }) => {
-  if (!immunizations || immunizations.length === 0) return null;
+  // Normalize the immunizations data to always be an array
+  const immunizationArray = useMemo(() => {
+    // If immunizations is undefined or null, return empty array
+    if (!immunizations) return [];
+    
+    // If immunizations is already an array, use it directly
+    if (Array.isArray(immunizations)) {
+      return immunizations;
+    }
+    
+    // If it's an object, check if it has values that can be converted to an array
+    if (typeof immunizations === 'object') {
+      const values = Object.values(immunizations);
+      if (Array.isArray(values) && values.length > 0) {
+        return values;
+      }
+    }
+    
+    // Return empty array as fallback
+    return [];
+  }, [immunizations]);
+
+  // If there are no immunizations after normalization, return null
+  if (immunizationArray.length === 0) return null;
 
   return (
     <EditableSection title="Immunizations">
       <div className="space-y-4">
-        {immunizations.map((immunization, index) => (
+        {immunizationArray.map((immunization, index) => (
           <div key={index} className="pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
             <div className="flex justify-between items-start mb-1">
               <span className="font-medium text-gray-900">{immunization.disease}</span>
