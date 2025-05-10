@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { Search } from 'lucide-react';
+import { Search, ArrowDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -102,25 +102,28 @@ const PatientListing = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="whitespace-nowrap">
+                      Zuletzt aktualisiert
+                      <ArrowDown className="inline-block ml-1 h-4 w-4 text-gray-500" />
+                    </TableHead>
                     <TableHead>Patient ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Geburtsdatum</TableHead>
-                    <TableHead>Zuletzt aktualisiert</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPatients.map((patient) => (
                     <TableRow key={patient.id} className="cursor-pointer hover:bg-gray-50">
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(patient.created_at)}
+                      </TableCell>
                       <TableCell>{patient.patient_id}</TableCell>
                       <TableCell>
                         {patient.first_name || '-'} {patient.last_name || '-'}
                       </TableCell>
                       <TableCell>
                         {patient.dob ? new Date(patient.dob).toLocaleDateString('de-DE') : '-'}
-                      </TableCell>
-                      <TableCell>
-                        {formatDate(patient.created_at)}
                       </TableCell>
                       <TableCell>
                         <Button 
