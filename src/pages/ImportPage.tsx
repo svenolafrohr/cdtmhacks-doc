@@ -5,130 +5,40 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from "sonner";
-import { supabase } from '@/integrations/supabase/client';
-import { parseJsonbField } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const ImportPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast: shadcnToast } = useToast();
-  const [patientData, setPatientData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    if (id) {
-      fetchPatientData(id);
-    } else {
-      setLoading(false);
-    }
-  }, [id]);
-  
-  const fetchPatientData = async (patientId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('patient_record')
-        .select('*')
-        .eq('id', patientId)
-        .single();
-        
-      if (error) {
-        console.error('Error fetching patient data:', error);
-        toast.error("Fehler beim Laden der Patientendaten");
-        setLoading(false);
-        return;
-      }
-      
-      setPatientData(data);
-      setLoading(false);
-    } catch (err) {
-      console.error('Failed to fetch patient data:', err);
-      toast.error("Fehler beim Laden der Patientendaten");
-      setLoading(false);
-    }
-  };
   
   // Create FHIR MIO data with dynamic values
-  const getFhirData = () => {
-    // If no patient data is available, return a template with some placeholder values
-    if (!patientData && !id) {
-      return {
-        resourceType: "Bundle",
-        id: "bundle-transaction",
-        meta: {
-          lastUpdated: new Date().toISOString()
-        },
-        type: "transaction",
-        entry: [
-          {
-            resource: {
-              resourceType: "Patient",
-              id: `patient-${Math.random().toString(36).substring(2, 11)}`,
-              meta: {
-                profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_MR_Patient"]
-              },
-              name: [
-                {
-                  use: "official",
-                  family: "Mustermann",
-                  given: ["Max"]
-                }
-              ],
-              gender: "male",
-              birthDate: "1974-12-25"
+  const fhirData = {
+    resourceType: "Bundle",
+    id: "bundle-transaction",
+    meta: {
+      lastUpdated: new Date().toISOString()
+    },
+    type: "transaction",
+    entry: [
+      {
+        resource: {
+          resourceType: "Patient",
+          id: `patient-${id || Math.random().toString(36).substring(2, 11)}`,
+          meta: {
+            profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_MR_Patient"]
+          },
+          name: [
+            {
+              use: "official",
+              family: id ? `Patient-${id}` : "Mustermann",
+              given: ["Max"]
             }
-          }
-        ]
-      };
-    }
-    
-    // Use actual patient data when available
-    const patientId = patientData?.id || id || Math.random().toString(36).substring(2, 11);
-    const firstName = patientData?.first_name || "Max";
-    const lastName = patientData?.last_name || `Patient-${id}`;
-    const birthDate = patientData?.dob || "1974-12-25";
-    
-    // Parse jsonb fields from patient data
-    const allergies = parseJsonbField<any[]>(patientData?.allergies) || [];
-    const medications = parseJsonbField<any[]>(patientData?.medications) || [];
-    const diagnoses = parseJsonbField<any[]>(patientData?.diagnoses) || [];
-    const vitalSigns = parseJsonbField<any>(patientData?.vital_signs) || {};
-    
-    const fhirData = {
-      resourceType: "Bundle",
-      id: "bundle-transaction",
-      meta: {
-        lastUpdated: new Date().toISOString()
-      },
-      type: "transaction",
-      entry: [
-        {
-          resource: {
-            resourceType: "Patient",
-            id: `patient-${patientId}`,
-            meta: {
-              profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_MR_Patient"]
-            },
-            name: [
-              {
-                use: "official",
-                family: lastName,
-                given: [firstName]
-              }
-            ],
-            gender: patientData?.gender || "male",
-            birthDate: birthDate
-          }
+          ],
+          gender: "male",
+          birthDate: "1974-12-25"
         }
-      ]
-    };
-    
-    // Add blood pressure observation if vital signs are available
-    if (vitalSigns?.blood_pressure) {
-      const systolic = vitalSigns.blood_pressure.systolic || Math.floor(Math.random() * (140 - 110)) + 110;
-      const diastolic = vitalSigns.blood_pressure.diastolic || Math.floor(Math.random() * (90 - 70)) + 70;
-      
-      fhirData.entry.push({
+      },
+      {
         resource: {
           resourceType: "Observation",
           id: `bp-${new Date().getTime()}`,
@@ -158,7 +68,7 @@ const ImportPage = () => {
             text: "Blood pressure systolic & diastolic"
           },
           subject: {
-            reference: `Patient/patient-${patientId}`
+            reference: `Patient/patient-${id || Math.random().toString(36).substring(2, 11)}`
           },
           effectiveDateTime: new Date().toISOString(),
           component: [
@@ -173,7 +83,7 @@ const ImportPage = () => {
                 ]
               },
               valueQuantity: {
-                value: systolic,
+                value: Math.floor(Math.random() * (140 - 110)) + 110,
                 unit: "mmHg",
                 system: "http://unitsofmeasure.org",
                 code: "mm[Hg]"
@@ -190,7 +100,7 @@ const ImportPage = () => {
                 ]
               },
               valueQuantity: {
-                value: diastolic,
+                value: Math.floor(Math.random() * (90 - 70)) + 70,
                 unit: "mmHg",
                 system: "http://unitsofmeasure.org",
                 code: "mm[Hg]"
@@ -198,62 +108,8 @@ const ImportPage = () => {
             }
           ]
         }
-      });
-    }
-    
-    // Add medications if available
-    if (medications && medications.length > 0) {
-      medications.slice(0, 3).forEach((med, index) => {
-        fhirData.entry.push({
-          resource: {
-            resourceType: "MedicationStatement",
-            id: `med-${new Date().getTime() + index}`,
-            meta: {
-              profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_MedicationStatement"]
-            },
-            status: "active",
-            medicationCodeableConcept: {
-              coding: [
-                {
-                  system: "http://fhir.de/CodeSystem/ifa/pzn",
-                  code: med.pzn || "12345678",
-                  display: med.medication || "Medication"
-                }
-              ]
-            },
-            subject: {
-              reference: `Patient/patient-${patientId}`
-            },
-            effectivePeriod: {
-              start: med.start_date || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-            },
-            dosage: [
-              {
-                text: med.dosage || "1-0-0-0",
-                timing: {
-                  repeat: {
-                    frequency: 1,
-                    period: 1,
-                    periodUnit: "d"
-                  }
-                },
-                route: {
-                  coding: [
-                    {
-                      system: "http://standardterms.edqm.eu",
-                      code: "20053000",
-                      display: "Oral use"
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        });
-      });
-    } else {
-      // Add a placeholder medication
-      fhirData.entry.push({
+      },
+      {
         resource: {
           resourceType: "MedicationStatement",
           id: `med-${new Date().getTime()}`,
@@ -271,7 +127,7 @@ const ImportPage = () => {
             ]
           },
           subject: {
-            reference: `Patient/patient-${patientId}`
+            reference: `Patient/patient-${id || Math.random().toString(36).substring(2, 11)}`
           },
           effectivePeriod: {
             start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -298,68 +154,8 @@ const ImportPage = () => {
             }
           ]
         }
-      });
-    }
-    
-    // Add diagnoses if available
-    if (diagnoses && diagnoses.length > 0) {
-      diagnoses.slice(0, 3).forEach((diag, index) => {
-        fhirData.entry.push({
-          resource: {
-            resourceType: "Condition",
-            id: `condition-${new Date().getTime() + index}`,
-            meta: {
-              profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_Condition"]
-            },
-            clinicalStatus: {
-              coding: [
-                {
-                  system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
-                  code: "active",
-                  display: "Active"
-                }
-              ]
-            },
-            verificationStatus: {
-              coding: [
-                {
-                  system: "http://terminology.hl7.org/CodeSystem/condition-ver-status",
-                  code: "confirmed",
-                  display: "Confirmed"
-                }
-              ]
-            },
-            category: [
-              {
-                coding: [
-                  {
-                    system: "http://terminology.hl7.org/CodeSystem/condition-category",
-                    code: "problem-list-item",
-                    display: "Problem List Item"
-                  }
-                ]
-              }
-            ],
-            code: {
-              coding: [
-                {
-                  system: "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
-                  code: diag.icd10_code || "R00.0",
-                  display: diag.diagnosis_name || "Unspecified diagnosis"
-                }
-              ],
-              text: diag.diagnosis_name || "Unspecified"
-            },
-            subject: {
-              reference: `Patient/patient-${patientId}`
-            },
-            recordedDate: diag.diagnosis_date || new Date().toISOString().split('T')[0]
-          }
-        });
-      });
-    } else {
-      // Add a placeholder condition
-      fhirData.entry.push({
+      },
+      {
         resource: {
           resourceType: "Condition",
           id: `condition-${new Date().getTime()}`,
@@ -406,67 +202,13 @@ const ImportPage = () => {
             text: "Hypertonie"
           },
           subject: {
-            reference: `Patient/patient-${patientId}`
+            reference: `Patient/patient-${id || Math.random().toString(36).substring(2, 11)}`
           },
           recordedDate: new Date().toISOString().split('T')[0]
         }
-      });
-    }
-    
-    // Add allergies if available
-    if (allergies && allergies.length > 0) {
-      allergies.slice(0, 3).forEach((allergy, index) => {
-        fhirData.entry.push({
-          resource: {
-            resourceType: "AllergyIntolerance",
-            id: `allergy-${new Date().getTime() + index}`,
-            meta: {
-              profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_AllergyIntolerance"]
-            },
-            clinicalStatus: {
-              coding: [
-                {
-                  system: "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
-                  code: "active",
-                  display: "Active"
-                }
-              ]
-            },
-            verificationStatus: {
-              coding: [
-                {
-                  system: "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification",
-                  code: "confirmed",
-                  display: "Confirmed"
-                }
-              ]
-            },
-            type: "allergy",
-            category: ["medication"],
-            criticality: allergy.severity === "high" ? "high" : "low",
-            code: {
-              coding: [
-                {
-                  system: "http://fhir.de/CodeSystem/bfarm/icd-10-gm",
-                  code: allergy.icd10_code || "Z88.0",
-                  display: allergy.name || "Unspecified allergy"
-                }
-              ],
-              text: allergy.name || "Unspecified allergy"
-            },
-            patient: {
-              reference: `Patient/patient-${patientId}`
-            },
-            recordedDate: new Date().toISOString().split('T')[0]
-          }
-        });
-      });
-    }
-    
-    return fhirData;
+      }
+    ]
   };
-
-  const fhirData = getFhirData();
   
   const handleConfirm = () => {
     // Show confirmation with OK button using Sonner toast
@@ -500,16 +242,9 @@ const ImportPage = () => {
           Diese Daten werden in das Electronic Health Record System übertragen.
         </p>
         
-        {loading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-[200px] w-full bg-gray-200" />
-            <Skeleton className="h-[100px] w-full bg-gray-200" />
-          </div>
-        ) : (
-          <div className="bg-black text-green-400 p-4 rounded font-mono text-sm overflow-x-auto">
-            <pre>{JSON.stringify(fhirData, null, 2)}</pre>
-          </div>
-        )}
+        <div className="bg-black text-green-400 p-4 rounded font-mono text-sm overflow-x-auto">
+          <pre>{JSON.stringify(fhirData, null, 2)}</pre>
+        </div>
       </div>
       
       <div className="flex justify-end">
