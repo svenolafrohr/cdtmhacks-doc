@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Pill } from 'lucide-react';
 
 interface MedicationsProps {
   medications: Array<{
@@ -15,48 +16,48 @@ interface MedicationsProps {
 }
 
 const MedicationsSection: React.FC<MedicationsProps> = ({ medications }) => {
-  if (!medications || medications.length === 0) return null;
-  
-  const getDosageSchedule = (med: { 
+  // Always show the section, even when empty
+  const getMedicationSchedule = (med: { 
     amount_morning: number;
     amount_noon: number;
     amount_evening: number;
     amount_night: number;
   }) => {
-    const schedule = [];
-    
-    if (med.amount_morning) schedule.push(`${med.amount_morning} morning`);
-    if (med.amount_noon) schedule.push(`${med.amount_noon} noon`);
-    if (med.amount_evening) schedule.push(`${med.amount_evening} evening`);
-    if (med.amount_night) schedule.push(`${med.amount_night} night`);
-    
-    return schedule.join(', ');
+    return `${med.amount_morning || 0}-${med.amount_noon || 0}-${med.amount_evening || 0}-${med.amount_night || 0}`;
   };
   
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Medications</CardTitle>
+        <div className="flex items-center">
+          <Pill className="h-5 w-5 mr-2 text-teal-600" />
+          <CardTitle className="text-lg font-semibold">Medications</CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {medications.map((medication, index) => (
-            <div key={index} className="pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
-              <div className="flex justify-between items-start mb-1">
-                <span className="font-medium text-gray-900">{medication.name}</span>
-                <span className="text-sm text-purple-600 bg-purple-50 px-2 py-0.5 rounded">
-                  {medication.dose}
-                </span>
+        {medications && medications.length > 0 ? (
+          <div className="space-y-2">
+            {medications.map((medication, index) => (
+              <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                <div className="flex-1">
+                  <span className="font-medium text-gray-900">{medication.name}</span>
+                  <span className="mx-2 text-gray-400">|</span>
+                  <span className="text-sm text-gray-600">{medication.dose}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-sm font-mono bg-purple-50 text-purple-700 px-2 py-0.5 rounded mr-2">
+                    {getMedicationSchedule(medication)}
+                  </span>
+                  {medication.comment && (
+                    <span className="text-xs text-gray-500">{medication.comment}</span>
+                  )}
+                </div>
               </div>
-              <p className="text-sm text-gray-600">
-                {getDosageSchedule(medication)}
-              </p>
-              {medication.comment && (
-                <p className="text-sm text-gray-500 mt-1">{medication.comment}</p>
-              )}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-3 text-center text-gray-500">No medications recorded</div>
+        )}
       </CardContent>
     </Card>
   );

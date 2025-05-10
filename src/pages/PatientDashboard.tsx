@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
-import { Search, Paperclip, ChevronDown, X, Mic, ArrowLeft } from 'lucide-react';
+import { Search, Paperclip, ChevronDown, X, Mic, ArrowLeft, Calendar, SquarePen } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -24,7 +23,7 @@ import LabResultsSection from '@/components/medical/LabResultsSection';
 import ObservationsSection from '@/components/medical/ObservationsSection';
 import WearableDataSection from '@/components/medical/WearableDataSection';
 import ImmunizationsSection from '@/components/medical/ImmunizationsSection';
-import ProceduresSection from '@/components/medical/ProceduresSection';
+import ScreeningsSection from '@/components/medical/ScreeningsSection';
 import PractitionersSection from '@/components/medical/PractitionersSection';
 import ProgramEligibilitySection from '@/components/medical/ProgramEligibilitySection';
 import OpenQuestionsSection from '@/components/medical/OpenQuestionsSection';
@@ -302,7 +301,7 @@ const PatientDashboard = () => {
       </div>
       
       {/* Medical categories - reorganized according to request */}
-      <Accordion type="multiple" className="space-y-4 mt-4" defaultValue={["anamnesis", "testing", "medication", "diagnoses", "patient-context", "open-questions", "assessment-plan"]}>
+      <Accordion type="multiple" className="space-y-4 mt-4" defaultValue={["anamnesis", "testing", "medication", "diagnoses", "patient-context", "assessment-plan"]}>
         {/* Anamnesis Section */}
         <AccordionItem value="anamnesis" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
@@ -329,7 +328,7 @@ const PatientDashboard = () => {
               <VitalSignsSection vitalSigns={vital_signs} />
               <LabResultsSection labResults={labs} />
               <ObservationsSection observations={observations} />
-              <ProceduresSection procedures={procedures} />
+              <ScreeningsSection procedures={procedures} />
               <WearableDataSection wearableObservations={wearable_observations} />
             </div>
           </AccordionContent>
@@ -373,25 +372,17 @@ const PatientDashboard = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Open Questions Section */}
-        <AccordionItem value="open-questions" className="border rounded-lg overflow-hidden">
+        {/* Assessment & Plan Section (with Open Questions) */}
+        <AccordionItem value="assessment-plan" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Offene Fragen</span>
+            <div className="flex items-center">
+              <SquarePen className="h-5 w-5 mr-2 text-teal-600" />
+              <span className="text-lg font-medium">Procedere</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
               <OpenQuestionsSection openQuestions={open_questions} />
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-        
-        {/* Assessment & Plan Section */}
-        <AccordionItem value="assessment-plan" className="border rounded-lg overflow-hidden">
-          <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Procedere</span>
-          </AccordionTrigger>
-          <AccordionContent className="px-4 py-3">
-            <div className="space-y-6">
               <AssessmentPlanSection 
                 assessment={assessment} 
                 plan={plan} 

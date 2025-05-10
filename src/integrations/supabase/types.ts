@@ -68,9 +68,9 @@ export type Database = {
           plan: Json | null
           practitioners: Json | null
           prior_med_history: Json | null
-          procedures: Json | null
           program_eligibility: Json | null
           review_of_systems: Json | null
+          screenings: Json | null
           social_history: Json | null
           vital_signs: Json | null
           wearable_observations: Json | null
@@ -98,9 +98,9 @@ export type Database = {
           plan?: Json | null
           practitioners?: Json | null
           prior_med_history?: Json | null
-          procedures?: Json | null
           program_eligibility?: Json | null
           review_of_systems?: Json | null
+          screenings?: Json | null
           social_history?: Json | null
           vital_signs?: Json | null
           wearable_observations?: Json | null
@@ -128,9 +128,9 @@ export type Database = {
           plan?: Json | null
           practitioners?: Json | null
           prior_med_history?: Json | null
-          procedures?: Json | null
           program_eligibility?: Json | null
           review_of_systems?: Json | null
+          screenings?: Json | null
           social_history?: Json | null
           vital_signs?: Json | null
           wearable_observations?: Json | null
