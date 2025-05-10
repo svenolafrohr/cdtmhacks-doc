@@ -10,9 +10,16 @@ interface ScreeningsProps {
     date: string;
     details: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const ScreeningsSection: React.FC<ScreeningsProps> = ({ procedures }) => {
+const ScreeningsSection: React.FC<ScreeningsProps> = ({ procedures, colorScheme }) => {
   // Always display the section, even if empty
   return (
     <Card className="mb-4">

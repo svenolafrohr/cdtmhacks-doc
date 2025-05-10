@@ -12,9 +12,16 @@ interface MedicationsProps {
     amount_night: number;
     comment: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const MedicationsSection: React.FC<MedicationsProps> = ({ medications }) => {
+const MedicationsSection: React.FC<MedicationsProps> = ({ medications, colorScheme }) => {
   // Always show the section, even when empty
   const getMedicationSchedule = (med: { 
     amount_morning: number;
@@ -28,30 +35,28 @@ const MedicationsSection: React.FC<MedicationsProps> = ({ medications }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex items-center">
-          <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
-            M
-          </div>
-          <CardTitle className="text-lg font-semibold">Medications</CardTitle>
-        </div>
+        <CardTitle className="text-lg font-semibold">Medications</CardTitle>
       </CardHeader>
       <CardContent>
         {medications && medications.length > 0 ? (
           <div className="space-y-2">
             {medications.map((medication, index) => (
-              <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+              <div 
+                key={index} 
+                className={`flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0`}
+              >
                 <div className="flex-1">
                   <span className="font-medium text-gray-900">{medication.name}</span>
                   <span className="mx-2 text-gray-400">|</span>
                   <span className="text-sm text-gray-600">{medication.dose}</span>
+                  {medication.comment && (
+                    <span className="ml-2 text-xs text-gray-500">{medication.comment}</span>
+                  )}
                 </div>
-                <div className="flex items-center">
-                  <span className="text-sm font-mono bg-purple-50 text-purple-700 px-2 py-0.5 rounded mr-2">
+                <div>
+                  <span className={`text-sm font-mono ${colorScheme ? `${colorScheme.highlight} ${colorScheme.highlightText}` : 'bg-purple-50 text-purple-700'} px-2 py-0.5 rounded`}>
                     {getMedicationSchedule(medication)}
                   </span>
-                  {medication.comment && (
-                    <span className="text-xs text-gray-500">{medication.comment}</span>
-                  )}
                 </div>
               </div>
             ))}

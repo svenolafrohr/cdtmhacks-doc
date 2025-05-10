@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
-import { Search, ChevronDown, Mic, ArrowLeft, Activity, Table, Pill, FileText, Folder, ClipboardPen } from 'lucide-react';
+import { Search, ChevronDown, Mic, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 
 // Medical data display components
 import EncounterSection from '@/components/medical/EncounterSection';
@@ -91,6 +89,59 @@ const PatientDashboard = () => {
     
     fetchPatientRecord();
   }, [id]);
+  
+  // Define section colors based on the image provided
+  const sectionColors = {
+    anamnesis: {
+      bg: 'bg-amber-50',
+      border: 'border-amber-300',
+      text: 'text-amber-800',
+      highlight: 'bg-amber-100',
+      highlightText: 'text-amber-900'
+    },
+    testing: {
+      bg: 'bg-green-50',
+      border: 'border-green-300',
+      text: 'text-green-800',
+      highlight: 'bg-green-100',
+      highlightText: 'text-green-900'
+    },
+    medication: {
+      bg: 'bg-blue-50',
+      border: 'border-blue-300',
+      text: 'text-blue-800',
+      highlight: 'bg-blue-100',
+      highlightText: 'text-blue-900'
+    },
+    diagnoses: {
+      bg: 'bg-orange-50',
+      border: 'border-orange-300',
+      text: 'text-orange-800',
+      highlight: 'bg-orange-100',
+      highlightText: 'text-orange-900'
+    },
+    organization: {
+      bg: 'bg-purple-50',
+      border: 'border-purple-300',
+      text: 'text-purple-800',
+      highlight: 'bg-purple-100',
+      highlightText: 'text-purple-900'
+    },
+    procedere: {
+      bg: 'bg-sky-50',
+      border: 'border-sky-300',
+      text: 'text-sky-800',
+      highlight: 'bg-sky-100',
+      highlightText: 'text-sky-900'
+    },
+    followup: {
+      bg: 'bg-cyan-50',
+      border: 'border-cyan-300',
+      text: 'text-cyan-800',
+      highlight: 'bg-cyan-100',
+      highlightText: 'text-cyan-900'
+    }
+  };
   
   // Define default values for each data type to satisfy TypeScript
   const defaultEncounter = {
@@ -300,13 +351,13 @@ const PatientDashboard = () => {
         </div>
       </div>
       
-      {/* Medical categories - reorganized according to request */}
+      {/* Medical categories with updated color scheme */}
       <Accordion type="multiple" className="space-y-4 mt-4" defaultValue={["anamnesis", "testing", "medication", "diagnoses", "patient-context", "assessment-plan"]}>
         {/* Anamnesis Section */}
-        <AccordionItem value="anamnesis" className="border rounded-lg overflow-hidden">
+        <AccordionItem value="anamnesis" className={`border rounded-lg overflow-hidden ${sectionColors.anamnesis.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+              <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.anamnesis.bg} ${sectionColors.anamnesis.text} font-bold text-2xl rounded-md mr-3`}>
                 A
               </div>
               <span className="text-lg font-medium">Anamnese</span>
@@ -314,20 +365,20 @@ const PatientDashboard = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <EncounterSection encounter={encounter} />
-              <AllergiesSection allergies={allergies} />
-              <FamilyHistorySection familyHistory={family_history} />
-              <SocialHistorySection socialHistory={social_history} />
-              <ReviewOfSystemsSection reviewOfSystems={review_of_systems} />
+              <EncounterSection encounter={encounter} colorScheme={sectionColors.anamnesis} />
+              <AllergiesSection allergies={allergies} colorScheme={sectionColors.anamnesis} />
+              <FamilyHistorySection familyHistory={family_history} colorScheme={sectionColors.anamnesis} />
+              <SocialHistorySection socialHistory={social_history} colorScheme={sectionColors.anamnesis} />
+              <ReviewOfSystemsSection reviewOfSystems={review_of_systems} colorScheme={sectionColors.anamnesis} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
         {/* Testing Section */}
-        <AccordionItem value="testing" className="border rounded-lg overflow-hidden">
+        <AccordionItem value="testing" className={`border rounded-lg overflow-hidden ${sectionColors.testing.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+              <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.testing.bg} ${sectionColors.testing.text} font-bold text-2xl rounded-md mr-3`}>
                 B
               </div>
               <span className="text-lg font-medium">Vorbefunde</span>
@@ -335,20 +386,20 @@ const PatientDashboard = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <VitalSignsSection vitalSigns={vital_signs} />
-              <LabResultsSection labResults={labs} />
-              <ObservationsSection observations={observations} />
-              <ScreeningsSection procedures={procedures} />
-              <WearableDataSection wearableObservations={wearable_observations} />
+              <VitalSignsSection vitalSigns={vital_signs} colorScheme={sectionColors.testing} />
+              <LabResultsSection labResults={labs} colorScheme={sectionColors.testing} />
+              <ObservationsSection observations={observations} colorScheme={sectionColors.testing} />
+              <ScreeningsSection procedures={procedures} colorScheme={sectionColors.testing} />
+              <WearableDataSection wearableObservations={wearable_observations} colorScheme={sectionColors.testing} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
         {/* Medication Section */}
-        <AccordionItem value="medication" className="border rounded-lg overflow-hidden">
+        <AccordionItem value="medication" className={`border rounded-lg overflow-hidden ${sectionColors.medication.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+              <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.medication.bg} ${sectionColors.medication.text} font-bold text-2xl rounded-md mr-3`}>
                 M
               </div>
               <span className="text-lg font-medium">Dauermedikation</span>
@@ -356,16 +407,16 @@ const PatientDashboard = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <MedicationsSection medications={medications} />
+              <MedicationsSection medications={medications} colorScheme={sectionColors.medication} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
         {/* Diagnoses Section */}
-        <AccordionItem value="diagnoses" className="border rounded-lg overflow-hidden">
+        <AccordionItem value="diagnoses" className={`border rounded-lg overflow-hidden ${sectionColors.diagnoses.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+              <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.diagnoses.bg} ${sectionColors.diagnoses.text} font-bold text-2xl rounded-md mr-3`}>
                 D
               </div>
               <span className="text-lg font-medium">Diagnosen</span>
@@ -373,16 +424,16 @@ const PatientDashboard = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <DiagnosesSection diagnoses={diagnoses} />
+              <DiagnosesSection diagnoses={diagnoses} colorScheme={sectionColors.diagnoses} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
         {/* Patient Context Section */}
-        <AccordionItem value="patient-context" className="border rounded-lg overflow-hidden">
+        <AccordionItem value="patient-context" className={`border rounded-lg overflow-hidden ${sectionColors.organization.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+              <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.organization.bg} ${sectionColors.organization.text} font-bold text-2xl rounded-md mr-3`}>
                 O
               </div>
               <span className="text-lg font-medium">Organisatorisches</span>
@@ -390,18 +441,18 @@ const PatientDashboard = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <ImmunizationsSection immunizations={immunizations} />
-              <ProgramEligibilitySection programEligibility={program_eligibility} />
-              <PractitionersSection practitioners={practitioners} />
+              <ImmunizationsSection immunizations={immunizations} colorScheme={sectionColors.organization} />
+              <ProgramEligibilitySection programEligibility={program_eligibility} colorScheme={sectionColors.organization} />
+              <PractitionersSection practitioners={practitioners} colorScheme={sectionColors.organization} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
         {/* Assessment & Plan Section (with Open Questions) */}
-        <AccordionItem value="assessment-plan" className="border rounded-lg overflow-hidden">
+        <AccordionItem value="assessment-plan" className={`border rounded-lg overflow-hidden ${sectionColors.procedere.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
-              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+              <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.procedere.bg} ${sectionColors.procedere.text} font-bold text-2xl rounded-md mr-3`}>
                 P
               </div>
               <span className="text-lg font-medium">Procedere</span>
@@ -409,10 +460,11 @@ const PatientDashboard = () => {
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <OpenQuestionsSection openQuestions={open_questions} />
+              <OpenQuestionsSection openQuestions={open_questions} colorScheme={sectionColors.procedere} />
               <AssessmentPlanSection 
                 assessment={assessment} 
                 plan={plan} 
+                colorScheme={sectionColors.procedere}
               />
             </div>
           </AccordionContent>

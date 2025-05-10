@@ -1,21 +1,24 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Shield } from 'lucide-react';
 
 interface AllergiesProps {
   allergies: any[] | null;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const AllergiesSection: React.FC<AllergiesProps> = ({ allergies }) => {
+const AllergiesSection: React.FC<AllergiesProps> = ({ allergies, colorScheme }) => {
   // Always display the section, even if empty
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex items-center">
-          <Shield className="h-5 w-5 mr-2 text-red-500" />
-          <CardTitle className="text-lg font-semibold">Allergies</CardTitle>
-        </div>
+        <CardTitle className="text-lg font-semibold">Allergies</CardTitle>
       </CardHeader>
       <CardContent>
         {allergies && allergies.length > 0 ? (
@@ -23,7 +26,7 @@ const AllergiesSection: React.FC<AllergiesProps> = ({ allergies }) => {
             {allergies.map((allergy, index) => (
               <span 
                 key={index} 
-                className="bg-red-50 text-red-700 text-sm px-3 py-1 rounded-full"
+                className={`${colorScheme ? `${colorScheme.highlight} ${colorScheme.highlightText}` : 'bg-red-50 text-red-700'} text-sm px-3 py-1 rounded-full`}
               >
                 {(allergy.name || "Unknown allergy")}
                 {allergy.icd10_code && ` (${allergy.icd10_code})`}

@@ -12,20 +12,22 @@ interface DiagnosesProps {
     icd10_code: string;
     diagnosis_details: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const DiagnosesSection: React.FC<DiagnosesProps> = ({ diagnoses }) => {
+const DiagnosesSection: React.FC<DiagnosesProps> = ({ diagnoses, colorScheme }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
-        <div className="flex items-center">
-          <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
-            D
-          </div>
-          <CardTitle className="text-lg font-semibold">Diagnosen</CardTitle>
-        </div>
+        <CardTitle className="text-lg font-semibold">Diagnosen</CardTitle>
         <div className="ml-auto">
           <button className="p-1 rounded-full hover:bg-gray-100">
             <svg 
@@ -60,7 +62,7 @@ const DiagnosesSection: React.FC<DiagnosesProps> = ({ diagnoses }) => {
             diagnoses.map((diagnosis, index) => (
               <div 
                 key={index} 
-                className="py-3 pl-2 border-l-4 border-amber-400 flex justify-between items-start"
+                className={`py-3 pl-2 border-l-4 ${colorScheme ? colorScheme.border : 'border-amber-400'} flex justify-between items-start`}
               >
                 <div>
                   <div className="flex items-center gap-2">
@@ -72,7 +74,7 @@ const DiagnosesSection: React.FC<DiagnosesProps> = ({ diagnoses }) => {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-700 font-medium">
+                  <span className={`${colorScheme ? `${colorScheme.highlight} ${colorScheme.highlightText}` : 'text-green-700'} font-medium`}>
                     {diagnosis.icd10_code?.startsWith('J') ? 'DD' : ''} Gesichert
                   </span>
                   <button className="p-1">

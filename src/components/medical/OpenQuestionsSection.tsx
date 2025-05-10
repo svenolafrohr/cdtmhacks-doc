@@ -1,17 +1,23 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Check, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Resolve, Discard } from 'lucide-react';
 
 interface OpenQuestionsProps {
   openQuestions: Array<{
     question_id: string;
     questions: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions }) => {
+const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions, colorScheme }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
@@ -19,34 +25,30 @@ const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions }) =
       </CardHeader>
       <CardContent>
         {openQuestions && openQuestions.length > 0 ? (
-          <div className="space-y-2">
-            {openQuestions.map((item) => (
+          <div className="space-y-3">
+            {openQuestions.map((question, index) => (
               <div 
-                key={item.question_id} 
-                className="p-3 bg-amber-50 border border-amber-100 rounded-md flex justify-between items-center"
+                key={question.question_id || index} 
+                className={`p-3 rounded ${colorScheme ? colorScheme.highlight : 'bg-yellow-50'}`}
               >
-                <p className="text-amber-800">{item.questions}</p>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
-                  >
-                    <Check className="h-5 w-5" />
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
+                <div className="flex justify-between items-start">
+                  <p className={`${colorScheme ? colorScheme.highlightText : 'text-yellow-800'} flex-1`}>
+                    {question.questions}
+                  </p>
+                  <div className="flex space-x-2 ml-4">
+                    <button className={`p-1 rounded hover:${colorScheme ? colorScheme.bg : 'bg-yellow-100'}`}>
+                      <Resolve className={`h-4 w-4 ${colorScheme ? colorScheme.text : 'text-green-600'}`} />
+                    </button>
+                    <button className={`p-1 rounded hover:${colorScheme ? colorScheme.bg : 'bg-yellow-100'}`}>
+                      <Discard className={`h-4 w-4 ${colorScheme ? colorScheme.text : 'text-red-600'}`} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="py-3 text-center text-gray-500">No open questions</div>
+          <div className="py-3 text-center text-gray-500">No open questions recorded</div>
         )}
       </CardContent>
     </Card>

@@ -1,275 +1,147 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer,
-  ReferenceLine
-} from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-
-interface WearableSample {
-  date: string;
-  type: string;
-  unit: string;
-  value: number;
-  device: string;
-  source: string;
-  metadata?: {
-    HKMetadataKeyHeartRateMotionContext?: number;
-  };
-}
-
-interface WearableData {
-  samples?: WearableSample[];
-}
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface WearableDataProps {
-  wearableObservations: WearableData | null;
+  wearableObservations: {
+    samples?: Array<{
+      date: string;
+      type: string;
+      unit: string;
+      value: number;
+      device: string;
+      source: string;
+      metadata?: {
+        HKMetadataKeyHeartRateMotionContext?: number;
+      };
+    }>;
+  };
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations }) => {
-  // Early return if no data is present, but still render the component with a message
-  if (!wearableObservations) {
-    return (
-      <Card className="mb-4">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-semibold">Wearable Data</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-4 text-gray-500">
-            Keine Wearable-Daten vorhanden
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-  
-  // Access samples array safely, defaulting to an empty array if not present
-  const samples = wearableObservations.samples || [];
-  
-  // If samples array is empty, show empty state
-  if (samples.length === 0) {
-    return (
-      <Card className="mb-4">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-semibold">Wearable Data</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-4 text-gray-500">
-            Keine Wearable-Daten vorhanden
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations, colorScheme }) => {
+  const { samples = [] } = wearableObservations || {};
 
-  // Transform Apple Health data types to more readable formats
-  const getMeasurementType = (type: string) => {
-    if (type === 'HKQuantityTypeIdentifierHeartRate') return 'heart_rate';
-    if (type === 'HKQuantityTypeIdentifierBloodPressureSystolic') return 'blood_pressure';
-    return type;
-  };
-
-  // Group by measurement type - using proper array methods on samples
-  const groupedData = samples.reduce((acc: Record<string, Array<any>>, item) => {
-    const measurementType = getMeasurementType(item.type);
+  // Process data for chart display
+  const chartData = useMemo(() => {
+    if (!samples || samples.length === 0) return [];
     
-    if (!acc[measurementType]) {
-      acc[measurementType] = [];
-    }
-    
-    // Transform the data to match the expected format for rendering
-    const transformedItem = {
-      measurement_type: measurementType,
-      datetime: item.date,
-      frequency: measurementType === 'heart_rate' ? item.value * 60 : undefined, // Convert from count/s to bpm
-      level: measurementType !== 'heart_rate' ? item.value : undefined,
-      unit: item.unit,
-      method: item.source,
-      is_abnormal: false // We don't have abnormal data in the sample
-    };
-    
-    acc[measurementType].push(transformedItem);
-    return acc;
-  }, {});
-  
-  // Prepare chart data
-  const prepareChartData = (dataArray: any[]) => {
-    return dataArray
-      .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
-      .map(item => {
-        return {
-          date: item.datetime,
-          value: item.frequency || item.level,
-          unit: item.unit
-        };
-      });
-  };
-  
-  // Get chart configuration based on measurement type
-  const getChartConfig = (type: string) => {
-    switch(type) {
-      case 'heart_rate':
-        return {
-          color: '#ef4444',
-          refValue: 75,
-          refLabel: 'Normal resting rate',
-          yAxisDomain: [40, 180],
-          unit: 'bpm'
-        };
-      case 'blood_pressure':
-        return {
-          color: '#3b82f6',
-          refValue: 120,
-          refLabel: 'Normal systolic',
-          yAxisDomain: [60, 180],
-          unit: 'mmHg'
-        };
-      default:
-        return {
-          color: '#8b5cf6',
-          yAxisDomain: ['auto', 'auto'],
-          unit: ''
-        };
-    }
-  };
-
-  const renderWearableChart = (type: string, dataArray: any[]) => {
-    const chartData = prepareChartData(dataArray);
-    const config = getChartConfig(type);
-    
-    // Skip charts if there's not enough data
-    if (chartData.length < 2) return null;
-    
-    return (
-      <div className="h-64 mt-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="date" 
-              tickFormatter={(value) => formatDate(value).split(',')[0]} 
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis 
-              domain={config.yAxisDomain} 
-              tick={{ fontSize: 12 }}
-            />
-            <Tooltip 
-              formatter={(value: number) => [`${value} ${config.unit || chartData[0]?.unit || ''}`, '']}
-              labelFormatter={(label) => formatDate(label).split(',')[0]}
-            />
-            <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="value" 
-              stroke={config.color} 
-              activeDot={{ r: 8 }}
-              name={type.replace('_', ' ')}
-            />
-            {config.refValue && (
-              <ReferenceLine 
-                y={config.refValue} 
-                stroke={config.color} 
-                strokeDasharray="3 3" 
-                label={{ value: config.refLabel, fill: config.color, fontSize: 12 }}
-              />
-            )}
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  const renderWearableData = (data: any) => {
-    switch (data.measurement_type) {
-      case 'heart_rate':
-        return (
-          <div className="flex">
-            <span className="font-medium">{data.frequency}</span>
-            <span className="ml-1">bpm</span>
-            {data.is_abnormal && (
-              <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
-            )}
-          </div>
-        );
-        
-      case 'blood_pressure':
-        return (
-          <div className="flex">
-            <span className="font-medium">{data.systolic}/{data.diastolic}</span>
-            <span className="ml-1">mmHg</span>
-            {data.is_abnormal && (
-              <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
-            )}
-          </div>
-        );
+    // Group by date and type
+    const groupedData = samples.reduce((acc, sample) => {
+      const date = sample.date ? formatDate(sample.date).split(',')[0] : 'Unknown Date';
       
-      default:
-        return (
-          <div>
-            <div className="flex">
-              <span className="font-medium">{data.level}</span>
-              <span className="ml-1">{data.unit}</span>
-              {data.is_abnormal && (
-                <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
-              )}
-            </div>
-            {(data.ref_range_lower !== undefined && data.ref_range_upper !== undefined) && (
-              <div className="text-xs text-gray-500 mt-0.5">
-                Reference: {data.ref_range_lower}-{data.ref_range_upper} {data.unit}
-              </div>
-            )}
-          </div>
-        );
-    }
+      if (!acc[date]) {
+        acc[date] = {};
+      }
+      
+      // For multiple readings of the same type in a day, take the average
+      if (acc[date][sample.type]) {
+        acc[date][sample.type].sum += sample.value;
+        acc[date][sample.type].count += 1;
+        acc[date][sample.type].unit = sample.unit;
+      } else {
+        acc[date][sample.type] = {
+          sum: sample.value,
+          count: 1,
+          unit: sample.unit
+        };
+      }
+      
+      return acc;
+    }, {} as Record<string, Record<string, {sum: number, count: number, unit: string}>>);
+    
+    // Convert to array format for recharts
+    return Object.entries(groupedData).map(([date, types]) => {
+      const point: any = { date };
+      
+      Object.entries(types).forEach(([type, data]) => {
+        point[type] = data.sum / data.count;
+        point[`${type}Unit`] = data.unit;
+      });
+      
+      return point;
+    }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [samples]);
+  
+  // Get unique measurement types for chart configuration
+  const measurementTypes = useMemo(() => {
+    const types = new Set<string>();
+    samples.forEach(sample => {
+      types.add(sample.type);
+    });
+    return Array.from(types);
+  }, [samples]);
+  
+  // Colors for different measurement types
+  const typeColors = {
+    "HeartRate": "#FF5252",
+    "StepCount": "#4CAF50",
+    "DistanceWalkingRunning": "#2196F3",
+    "ActiveEnergyBurned": "#FFC107",
+    "BloodPressureSystolic": "#9C27B0",
+    "BloodPressureDiastolic": "#673AB7",
+    "RespiratoryRate": "#00BCD4",
+    "OxygenSaturation": "#3F51B5"
   };
-
+  
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold">Wearable Data</CardTitle>
       </CardHeader>
       <CardContent>
-        {Object.entries(groupedData).map(([type, data]) => (
-          <div key={type} className="mb-6 last:mb-0">
-            <h4 className="font-medium text-gray-900 mb-2 capitalize">
-              {type.replace('_', ' ')}
-            </h4>
+        {samples && samples.length > 0 ? (
+          <>
+            <div className="h-64 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name, props) => {
+                      const unit = props.payload[`${name}Unit`];
+                      return [`${value} ${unit}`, name];
+                    }}
+                  />
+                  <Legend />
+                  {measurementTypes.map((type) => (
+                    <Line 
+                      key={type} 
+                      type="monotone" 
+                      dataKey={type} 
+                      stroke={typeColors[type as keyof typeof typeColors] || colorScheme?.text || '#8884d8'} 
+                      activeDot={{ r: 8 }} 
+                      name={type}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
             
-            {/* Add chart visualization */}
-            {renderWearableChart(type, data)}
-            
-            <div className="space-y-3 mt-3">
-              {data.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex justify-between items-start pb-2 border-b border-gray-100 last:border-b-0">
-                  <div>
-                    {renderWearableData(item)}
-                    {item.method && (
-                      <div className="text-xs text-gray-500 mt-0.5">Method: {item.method}</div>
-                    )}
-                  </div>
-                  <span className="text-sm text-gray-500">
-                    {item.datetime ? formatDate(item.datetime).split(',')[0] : 'Date not available'}
-                  </span>
+            <div className="space-y-2">
+              {measurementTypes.map((type) => (
+                <div key={type} className="text-sm">
+                  <span 
+                    className="inline-block w-3 h-3 rounded-full mr-2" 
+                    style={{ backgroundColor: typeColors[type as keyof typeof typeColors] || colorScheme?.text || '#8884d8' }}
+                  />
+                  <span className="font-medium">{type}</span>
                 </div>
               ))}
-              {data.length > 3 && (
-                <div className="text-xs text-gray-500 text-center">
-                  + {data.length - 3} more measurements
-                </div>
-              )}
             </div>
-          </div>
-        ))}
+          </>
+        ) : (
+          <div className="py-6 text-center text-gray-500">No wearable data recorded</div>
+        )}
       </CardContent>
     </Card>
   );
