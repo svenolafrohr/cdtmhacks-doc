@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Pencil } from 'lucide-react';
 
 interface OpenQuestionsProps {
   openQuestions: Array<{
@@ -25,13 +26,15 @@ const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions, onC
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold">Open Questions</CardTitle>
           {onChange && (
-            <div className="flex items-center gap-2">
-              <Label htmlFor="edit-questions" className="text-xs">Edit</Label>
+            <div className="flex items-center gap-2 bg-gray-100 p-1.5 px-3 rounded-full shadow-sm">
+              <Pencil className="h-4 w-4 text-gray-600" />
+              <Label htmlFor="edit-questions" className="text-xs font-medium text-gray-700">Edit</Label>
               <Switch 
                 id="edit-questions"
                 checked={isEditing} 
                 onCheckedChange={setIsEditing}
                 aria-label="Toggle edit mode"
+                className="data-[state=checked]:bg-blue-500"
               />
             </div>
           )}
