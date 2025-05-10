@@ -9,181 +9,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Define TypeScript interfaces for FHIR resources
-interface FhirBaseResource {
-  resourceType: string;
-  id: string;
-  meta: {
-    profile: string[];
-  };
-}
-
-interface FhirPatientResource extends FhirBaseResource {
-  name: {
-    use: string;
-    family: string;
-    given: string[];
-  }[];
-  gender: string;
-  birthDate: string;
-}
-
-interface FhirObservationResource extends FhirBaseResource {
-  status: string;
-  category: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  }[];
-  code: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-    text?: string;
-  };
-  subject: {
-    reference: string;
-  };
-  effectiveDateTime: string;
-  component?: {
-    code: {
-      coding: {
-        system: string;
-        code: string;
-        display: string;
-      }[];
-    };
-    valueQuantity: {
-      value: number;
-      unit: string;
-      system: string;
-      code: string;
-    };
-  }[];
-}
-
-interface FhirMedicationStatementResource extends FhirBaseResource {
-  status: string;
-  medicationCodeableConcept: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  };
-  subject: {
-    reference: string;
-  };
-  effectivePeriod: {
-    start: string;
-  };
-  dosage: {
-    text: string;
-    timing?: {
-      repeat: {
-        frequency: number;
-        period: number;
-        periodUnit: string;
-      };
-    };
-    route?: {
-      coding: {
-        system: string;
-        code: string;
-        display: string;
-      }[];
-    };
-  }[];
-}
-
-interface FhirConditionResource extends FhirBaseResource {
-  clinicalStatus: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  };
-  verificationStatus: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  };
-  category: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  }[];
-  code: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-    text?: string;
-  };
-  subject: {
-    reference: string;
-  };
-  recordedDate: string;
-}
-
-interface FhirAllergyIntoleranceResource extends FhirBaseResource {
-  clinicalStatus: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  };
-  verificationStatus: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-  };
-  type: string;
-  category: string[];
-  criticality: string;
-  code: {
-    coding: {
-      system: string;
-      code: string;
-      display: string;
-    }[];
-    text: string;
-  };
-  patient: {
-    reference: string;
-  };
-  recordedDate: string;
-}
-
-interface FhirBundle {
-  resourceType: "Bundle";
-  id: string;
-  meta: {
-    lastUpdated: string;
-  };
-  type: string;
-  entry: (
-    | { resource: FhirPatientResource }
-    | { resource: FhirObservationResource }
-    | { resource: FhirMedicationStatementResource }
-    | { resource: FhirConditionResource }
-    | { resource: FhirAllergyIntoleranceResource }
-  )[];
-}
-
 const ImportPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -224,7 +49,7 @@ const ImportPage = () => {
   };
   
   // Create FHIR MIO data with dynamic values
-  const getFhirData = (): FhirBundle => {
+  const getFhirData = () => {
     // If no patient data is available, return a template with some placeholder values
     if (!patientData && !id) {
       return {
@@ -269,7 +94,7 @@ const ImportPage = () => {
     const diagnoses = parseJsonbField<any[]>(patientData?.diagnoses) || [];
     const vitalSigns = parseJsonbField<any>(patientData?.vital_signs) || {};
     
-    const fhirData: FhirBundle = {
+    const fhirData = {
       resourceType: "Bundle",
       id: "bundle-transaction",
       meta: {
