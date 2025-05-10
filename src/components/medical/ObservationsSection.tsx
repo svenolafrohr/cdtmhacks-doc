@@ -10,9 +10,16 @@ interface ObservationsProps {
     type: string;
     result: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const ObservationsSection: React.FC<ObservationsProps> = ({ observations }) => {
+const ObservationsSection: React.FC<ObservationsProps> = ({ observations, colorScheme }) => {
   if (!observations || observations.length === 0) return null;
 
   return (

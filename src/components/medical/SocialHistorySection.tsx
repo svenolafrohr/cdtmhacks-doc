@@ -12,9 +12,16 @@ interface SocialHistoryProps {
     kids: number;
     job: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const SocialHistorySection: React.FC<SocialHistoryProps> = ({ socialHistory }) => {
+const SocialHistorySection: React.FC<SocialHistoryProps> = ({ socialHistory, colorScheme }) => {
   if (!socialHistory || socialHistory.length === 0) return null;
   
   // Take just the first entry since this is usually per-patient

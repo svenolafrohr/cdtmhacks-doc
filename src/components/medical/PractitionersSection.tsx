@@ -8,9 +8,16 @@ interface PractitionersProps {
     first_name: string;
     function: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const PractitionersSection: React.FC<PractitionersProps> = ({ practitioners }) => {
+const PractitionersSection: React.FC<PractitionersProps> = ({ practitioners, colorScheme }) => {
   if (!practitioners || practitioners.length === 0) return null;
 
   return (
