@@ -105,25 +105,125 @@ const PatientDashboard = () => {
   };
   
   // Parse JSON fields from the patient record with proper defaults
-  const encounter = parseJsonbField(patientRecord?.encounter) || defaultEncounter;
-  const prior_med_history = parseJsonbField(patientRecord?.prior_med_history) || [];
-  const diagnoses = parseJsonbField(patientRecord?.diagnoses) || [];
-  const medications = parseJsonbField(patientRecord?.medications) || [];
-  const allergies = parseJsonbField(patientRecord?.allergies) || [];
-  const family_history = parseJsonbField(patientRecord?.family_history) || [];
-  const social_history = parseJsonbField(patientRecord?.social_history) || [];
-  const review_of_systems = parseJsonbField(patientRecord?.review_of_systems) || [];
-  const vital_signs = parseJsonbField(patientRecord?.vital_signs) || defaultVitalSigns;
-  const labs = parseJsonbField(patientRecord?.labs) || [];
-  const observations = parseJsonbField(patientRecord?.observations) || [];
-  const wearable_observations = parseJsonbField(patientRecord?.wearable_observations) || null;
-  const immunizations = parseJsonbField(patientRecord?.immunizations) || [];
-  const procedures = parseJsonbField(patientRecord?.procedures) || [];
-  const practitioners = parseJsonbField(patientRecord?.practitioners) || [];
-  const program_eligibility = parseJsonbField(patientRecord?.program_eligibility) || defaultProgramEligibility;
-  const open_questions = parseJsonbField(patientRecord?.open_questions) || [];
-  const assessment = parseJsonbField(patientRecord?.assessment) || defaultAssessment;
-  const plan = parseJsonbField(patientRecord?.plan) || defaultPlan;
+  const encounter = parseJsonbField<typeof defaultEncounter>(patientRecord?.encounter) || defaultEncounter;
+  const prior_med_history = parseJsonbField<Array<{
+    event_datetime: string;
+    event_type: string;
+    event_details: string;
+  }>>(patientRecord?.prior_med_history) || [];
+  
+  const diagnoses = parseJsonbField<Array<{
+    diagnosis_date: string;
+    diagnosis_name: string;
+    icd10_code: string;
+    diagnosis_details: string;
+  }>>(patientRecord?.diagnoses) || [];
+  
+  const medications = parseJsonbField<Array<{
+    name: string;
+    dose: string;
+    amount_morning: number;
+    amount_noon: number;
+    amount_evening: number;
+    amount_night: number;
+    comment: string;
+  }>>(patientRecord?.medications) || [];
+  
+  const allergies = parseJsonbField<any[]>(patientRecord?.allergies) || [];
+  
+  const family_history = parseJsonbField<Array<{
+    relative_name: string;
+    history: string;
+  }>>(patientRecord?.family_history) || [];
+  
+  const social_history = parseJsonbField<Array<{
+    patient_id: string;
+    drinking: string;
+    smoking: string;
+    drugs: string;
+    marital_status: string;
+    kids: number;
+    job: string;
+  }>>(patientRecord?.social_history) || [];
+  
+  const review_of_systems = parseJsonbField<Array<{
+    encounter_id: string;
+    system_name: string;
+    details: string;
+  }>>(patientRecord?.review_of_systems) || [];
+  
+  const vital_signs = parseJsonbField<typeof defaultVitalSigns>(patientRecord?.vital_signs) || defaultVitalSigns;
+  
+  const labs = parseJsonbField<Array<{
+    datetime: string;
+    analyte: string;
+    level: number;
+    unit: string;
+    method: string;
+    ref_range_lower: number;
+    ref_range_upper: number;
+    is_abnormal: boolean;
+    lab_provider: {
+      name: string;
+      address: string;
+    };
+  }>>(patientRecord?.labs) || [];
+  
+  const observations = parseJsonbField<Array<{
+    encounter_id: string;
+    datetime: string;
+    type: string;
+    result: string;
+  }>>(patientRecord?.observations) || [];
+  
+  const wearable_observations = parseJsonbField<{
+    samples?: Array<{
+      date: string;
+      type: string;
+      unit: string;
+      value: number;
+      device: string;
+      source: string;
+      metadata?: {
+        HKMetadataKeyHeartRateMotionContext?: number;
+      };
+    }>;
+  }>(patientRecord?.wearable_observations) || { samples: [] };
+  
+  const immunizations = parseJsonbField<Array<{
+    patient_id: string;
+    date: string;
+    disease: string;
+    vaccine_name: string;
+    batch_number: string;
+    best_before: string;
+    doctor_name: string;
+    doctor_address: any;
+    details: string;
+  }>>(patientRecord?.immunizations) || [];
+  
+  const procedures = parseJsonbField<Array<{
+    patient_id: string;
+    type: string;
+    date: string;
+    details: string;
+  }>>(patientRecord?.procedures) || [];
+  
+  const practitioners = parseJsonbField<Array<{
+    last_name: string;
+    first_name: string;
+    function: string;
+  }>>(patientRecord?.practitioners) || [];
+  
+  const program_eligibility = parseJsonbField<typeof defaultProgramEligibility>(patientRecord?.program_eligibility) || defaultProgramEligibility;
+  
+  const open_questions = parseJsonbField<Array<{
+    question_id: string;
+    questions: string;
+  }>>(patientRecord?.open_questions) || [];
+  
+  const assessment = parseJsonbField<typeof defaultAssessment>(patientRecord?.assessment) || defaultAssessment;
+  const plan = parseJsonbField<typeof defaultPlan>(patientRecord?.plan) || defaultPlan;
 
   if (loading) {
     return (

@@ -24,7 +24,7 @@ interface WearableDataProps {
 }
 
 const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations }) => {
-  // Early return if no data
+  // Early return if no data or samples array is missing/empty
   if (!wearableObservations || !wearableObservations.samples || wearableObservations.samples.length === 0) return null;
   
   // Use the samples array from the wearable data structure
@@ -37,7 +37,7 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
     return type;
   };
 
-  // Group by measurement type
+  // Group by measurement type - using proper array methods on samples
   const groupedData = samples.reduce((acc: Record<string, Array<any>>, item) => {
     const measurementType = getMeasurementType(item.type);
     
