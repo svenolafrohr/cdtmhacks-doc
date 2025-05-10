@@ -24,14 +24,16 @@ const AllergiesSection: React.FC<AllergiesProps> = ({ allergies, onChange, edita
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold">Allergies</CardTitle>
-          <Toggle 
-            className="h-8 w-8 p-0 rounded-full" 
-            pressed={isEditing} 
-            onPressedChange={setIsEditing}
-            aria-label="Toggle edit mode"
-          >
-            <Pencil className="h-4 w-4" />
-          </Toggle>
+          {onChange && (
+            <Toggle 
+              className="h-8 w-8 p-0 rounded-full" 
+              pressed={isEditing} 
+              onPressedChange={setIsEditing}
+              aria-label="Toggle edit mode"
+            >
+              <Pencil className="h-4 w-4" />
+            </Toggle>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -41,10 +43,10 @@ const AllergiesSection: React.FC<AllergiesProps> = ({ allergies, onChange, edita
               key={index} 
               className="bg-red-50 text-red-700 text-sm px-3 py-1 rounded-full flex items-center"
             >
-              {isEditing ? (
+              {isEditing && onChange ? (
                 <Input
                   value={allergy.icd10_code}
-                  onChange={(e) => onChange?.(index, 'icd10_code', e.target.value)}
+                  onChange={(e) => onChange(index, 'icd10_code', e.target.value)}
                   className="bg-transparent border-none p-0 w-auto focus-visible:ring-0"
                 />
               ) : (

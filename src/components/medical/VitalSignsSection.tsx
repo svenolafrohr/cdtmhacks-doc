@@ -31,14 +31,16 @@ const VitalSignsSection: React.FC<VitalSignsProps> = ({ vitalSigns, onChange, ed
             <span className="text-sm text-gray-500">
               {vitalSigns.datetime ? formatDate(vitalSigns.datetime) : 'Date not available'}
             </span>
-            <Toggle 
-              className="h-8 w-8 p-0 rounded-full" 
-              pressed={isEditing} 
-              onPressedChange={setIsEditing}
-              aria-label="Toggle edit mode"
-            >
-              <Pencil className="h-4 w-4" />
-            </Toggle>
+            {onChange && (
+              <Toggle 
+                className="h-8 w-8 p-0 rounded-full" 
+                pressed={isEditing} 
+                onPressedChange={setIsEditing}
+                aria-label="Toggle edit mode"
+              >
+                <Pencil className="h-4 w-4" />
+              </Toggle>
+            )}
           </div>
         </div>
       </CardHeader>

@@ -26,14 +26,16 @@ const ReviewOfSystemsSection: React.FC<ReviewOfSystemsProps> = ({ reviewOfSystem
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold">Review of Systems</CardTitle>
-          <Toggle 
-            className="h-8 w-8 p-0 rounded-full" 
-            pressed={isEditing} 
-            onPressedChange={setIsEditing}
-            aria-label="Toggle edit mode"
-          >
-            <Pencil className="h-4 w-4" />
-          </Toggle>
+          {onChange && (
+            <Toggle 
+              className="h-8 w-8 p-0 rounded-full" 
+              pressed={isEditing} 
+              onPressedChange={setIsEditing}
+              aria-label="Toggle edit mode"
+            >
+              <Pencil className="h-4 w-4" />
+            </Toggle>
+          )}
         </div>
       </CardHeader>
       <CardContent>
