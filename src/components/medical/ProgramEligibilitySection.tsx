@@ -13,9 +13,16 @@ interface ProgramEligibilityProps {
     elig_dmp_khk: boolean;
     elig_dmp_obesity: boolean;
   };
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programEligibility }) => {
+const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programEligibility, colorScheme }) => {
   if (!programEligibility) return null;
 
   const eligibilityItems = [

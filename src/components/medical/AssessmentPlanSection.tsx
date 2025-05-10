@@ -12,9 +12,16 @@ interface AssessmentPlanProps {
     plan: string;
     next_appointment: string;
   };
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const AssessmentPlanSection: React.FC<AssessmentPlanProps> = ({ assessment, plan }) => {
+const AssessmentPlanSection: React.FC<AssessmentPlanProps> = ({ assessment, plan, colorScheme }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">

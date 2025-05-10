@@ -14,9 +14,16 @@ interface ImmunizationsProps {
     doctor_address: any;
     details: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const ImmunizationsSection: React.FC<ImmunizationsProps> = ({ immunizations }) => {
+const ImmunizationsSection: React.FC<ImmunizationsProps> = ({ immunizations, colorScheme }) => {
   if (!immunizations || immunizations.length === 0) return null;
 
   return (

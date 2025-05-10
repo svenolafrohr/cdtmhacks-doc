@@ -8,9 +8,16 @@ interface ReviewOfSystemsProps {
     system_name: string;
     details: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const ReviewOfSystemsSection: React.FC<ReviewOfSystemsProps> = ({ reviewOfSystems }) => {
+const ReviewOfSystemsSection: React.FC<ReviewOfSystemsProps> = ({ reviewOfSystems, colorScheme }) => {
   if (!reviewOfSystems || reviewOfSystems.length === 0) return null;
 
   return (

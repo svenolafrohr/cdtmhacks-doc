@@ -10,9 +10,16 @@ interface VitalSignsProps {
     height: number;
     bmi: number;
   };
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const VitalSignsSection: React.FC<VitalSignsProps> = ({ vitalSigns }) => {
+const VitalSignsSection: React.FC<VitalSignsProps> = ({ vitalSigns, colorScheme }) => {
   if (!vitalSigns) return null;
 
   return (

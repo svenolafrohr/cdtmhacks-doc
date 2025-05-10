@@ -9,9 +9,16 @@ interface EncounterProps {
     chief_complaint: string;
     history_of_present_illness: string;
   };
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const EncounterSection: React.FC<EncounterProps> = ({ encounter }) => {
+const EncounterSection: React.FC<EncounterProps> = ({ encounter, colorScheme }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">

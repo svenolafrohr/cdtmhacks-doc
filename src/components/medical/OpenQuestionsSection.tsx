@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Resolve, Discard } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 
 interface OpenQuestionsProps {
   openQuestions: Array<{
@@ -37,10 +37,10 @@ const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions, col
                   </p>
                   <div className="flex space-x-2 ml-4">
                     <button className={`p-1 rounded hover:${colorScheme ? colorScheme.bg : 'bg-yellow-100'}`}>
-                      <Resolve className={`h-4 w-4 ${colorScheme ? colorScheme.text : 'text-green-600'}`} />
+                      <CheckCircle className={`h-4 w-4 ${colorScheme ? colorScheme.text : 'text-green-600'}`} />
                     </button>
                     <button className={`p-1 rounded hover:${colorScheme ? colorScheme.bg : 'bg-yellow-100'}`}>
-                      <Discard className={`h-4 w-4 ${colorScheme ? colorScheme.text : 'text-red-600'}`} />
+                      <XCircle className={`h-4 w-4 ${colorScheme ? colorScheme.text : 'text-red-600'}`} />
                     </button>
                   </div>
                 </div>

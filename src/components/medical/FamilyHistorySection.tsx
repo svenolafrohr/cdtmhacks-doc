@@ -7,9 +7,16 @@ interface FamilyHistoryProps {
     relative_name: string;
     history: string;
   }>;
+  colorScheme?: {
+    bg: string;
+    border: string;
+    text: string;
+    highlight: string;
+    highlightText: string;
+  };
 }
 
-const FamilyHistorySection: React.FC<FamilyHistoryProps> = ({ familyHistory }) => {
+const FamilyHistorySection: React.FC<FamilyHistoryProps> = ({ familyHistory, colorScheme }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
