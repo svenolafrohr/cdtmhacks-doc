@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
-
-// UI components
-import { Search, Paperclip, ChevronDown, X, Mic } from 'lucide-react';
+import { Search, Paperclip, ChevronDown, X, Mic, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -31,6 +31,8 @@ import OpenQuestionsSection from '@/components/medical/OpenQuestionsSection';
 import AssessmentPlanSection from '@/components/medical/AssessmentPlanSection';
 
 const PatientDashboard = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [patientRecord, setPatientRecord] = useState<any | null>(null);
@@ -41,23 +43,44 @@ const PatientDashboard = () => {
       try {
         setLoading(true);
         
-        // Get the most recent patient record
-        const { data, error } = await supabase
-          .from('patient_record')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(1);
+        if (!id) {
+          // If no id provided, fetch the most recent record (for backward compatibility)
+          const { data, error } = await supabase
+            .from('patient_record')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(1);
+            
+          if (error) {
+            throw error;
+          }
           
-        if (error) {
-          throw error;
-        }
-        
-        if (data && data.length > 0) {
-          setPatientRecord(data[0]);
-          console.log('Patient record retrieved:', data[0]);
+          if (data && data.length > 0) {
+            setPatientRecord(data[0]);
+            console.log('Most recent patient record retrieved:', data[0]);
+          } else {
+            console.log('No patient records found');
+            setError('No patient records found');
+          }
         } else {
-          console.log('No patient records found');
-          setError('No patient records found');
+          // Fetch specific patient record by ID
+          const { data, error } = await supabase
+            .from('patient_record')
+            .select('*')
+            .eq('id', id)
+            .single();
+            
+          if (error) {
+            throw error;
+          }
+          
+          if (data) {
+            setPatientRecord(data);
+            console.log('Patient record retrieved:', data);
+          } else {
+            console.log('No patient record found with ID:', id);
+            setError(`No patient record found with ID: ${id}`);
+          }
         }
       } catch (err: any) {
         console.error('Error fetching patient record:', err);
@@ -68,7 +91,7 @@ const PatientDashboard = () => {
     };
     
     fetchPatientRecord();
-  }, []);
+  }, [id]);
   
   // Define default values for each data type to satisfy TypeScript
   const defaultEncounter = {
@@ -236,21 +259,34 @@ const PatientDashboard = () => {
     return (
       <div className="flex flex-col justify-center items-center h-screen">
         <div className="text-xl text-red-600 mb-4">Error: {error}</div>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
+        <div className="flex gap-3">
+          <Button onClick={() => navigate('/patients')}>Back to Patient List</Button>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-4 pb-20">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold text-teal-800">GKV</h1>
-        {patientRecord && (
-          <div className="text-right">
-            <h2 className="font-medium">{patientRecord.first_name} {patientRecord.last_name}</h2>
-            <p className="text-sm text-gray-500">ID: {patientRecord.patient_id}</p>
-          </div>
-        )}
+      <div className="flex items-center mb-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/patients')}
+          className="mr-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Zurück
+        </Button>
+        <div className="flex-1 flex justify-between items-center">
+          <h1 className="text-xl font-semibold text-teal-800">GKV</h1>
+          {patientRecord && (
+            <div className="text-right">
+              <h2 className="font-medium">{patientRecord.first_name} {patientRecord.last_name}</h2>
+              <p className="text-sm text-gray-500">ID: {patientRecord.patient_id}</p>
+            </div>
+          )}
+        </div>
       </div>
       
       {/* Search bar */}

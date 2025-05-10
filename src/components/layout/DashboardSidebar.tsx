@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Users, 
   Calendar, 
@@ -13,13 +13,29 @@ import {
 } from 'lucide-react';
 
 const DashboardSidebar = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  
+  const isPathActive = (pathPattern: string | string[]) => {
+    if (Array.isArray(pathPattern)) {
+      return pathPattern.some(p => path.startsWith(p));
+    }
+    return path.startsWith(pathPattern);
+  };
+
   // Simplified sidebar that's less prominent to match the reference design
   return (
     <aside className="w-16 bg-gray-50 border-r border-gray-200 hidden md:flex flex-col items-center py-4">
       <div className="flex flex-col items-center gap-6 mt-4">
-        <SidebarIcon icon={FileText} label="Records" active />
+        <NavLink to="/">
+          <SidebarIcon 
+            icon={Users} 
+            label="Patienten" 
+            active={isPathActive(['/', '/patients', '/patient/'])} 
+          />
+        </NavLink>
+        <SidebarIcon icon={FileText} label="Records" />
         <SidebarIcon icon={FilePlus} label="New Record" />
-        <SidebarIcon icon={Users} label="Patients" />
         <SidebarIcon icon={Clock} label="History" />
         <SidebarIcon icon={Calendar} label="Calendar" />
       </div>
