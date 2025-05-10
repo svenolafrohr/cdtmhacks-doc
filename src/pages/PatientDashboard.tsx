@@ -374,14 +374,14 @@ const PatientDashboard = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Testing Section */}
+        {/* Testing Section - renamed to "Befunde" */}
         <AccordionItem value="testing" className={`border rounded-lg overflow-hidden ${sectionColors.testing.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
               <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.testing.bg} ${sectionColors.testing.text} font-bold text-2xl rounded-md mr-3`}>
                 B
               </div>
-              <span className="text-lg font-medium">Vorbefunde</span>
+              <span className="text-lg font-medium">Befunde</span>
             </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
@@ -395,14 +395,14 @@ const PatientDashboard = () => {
           </AccordionContent>
         </AccordionItem>
         
-        {/* Medication Section */}
+        {/* Medication Section - renamed to "Medikation" */}
         <AccordionItem value="medication" className={`border rounded-lg overflow-hidden ${sectionColors.medication.border}`}>
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <div className="flex items-center">
               <div className={`w-12 h-12 flex items-center justify-center ${sectionColors.medication.bg} ${sectionColors.medication.text} font-bold text-2xl rounded-md mr-3`}>
                 M
               </div>
-              <span className="text-lg font-medium">Dauermedikation</span>
+              <span className="text-lg font-medium">Medikation</span>
             </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
@@ -483,7 +483,7 @@ const PatientDashboard = () => {
           <Mic className="text-white" />
         </div>
         
-        <Button className="px-10 py-6 bg-white border border-teal-700 text-teal-700 hover:bg-teal-50">
+        <Button className="px-10 py-6 bg-white border border-teal-700 text-teal-700 hover:bg-teal-50" onClick={() => navigate('/import')}>
           Importieren
         </Button>
       </div>

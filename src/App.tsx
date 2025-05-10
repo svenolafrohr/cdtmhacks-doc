@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import PatientDashboard from "./pages/PatientDashboard";
 import PatientListing from "./pages/PatientListing";
+import ImportPage from "./pages/ImportPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,16 @@ const App = () => (
           <Route path="/patient/:id" element={
             <DashboardLayout>
               <PatientDashboard />
+            </DashboardLayout>
+          } />
+          <Route path="/import" element={
+            <DashboardLayout>
+              <ImportPage />
+            </DashboardLayout>
+          } />
+          <Route path="/import/:id" element={
+            <DashboardLayout>
+              <ImportPage />
             </DashboardLayout>
           } />
           <Route path="*" element={<NotFound />} />

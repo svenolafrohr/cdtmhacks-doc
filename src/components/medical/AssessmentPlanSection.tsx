@@ -34,7 +34,7 @@ const AssessmentPlanSection: React.FC<AssessmentPlanProps> = ({ assessment, plan
         </div>
         
         <div>
-          <h4 className="text-sm font-medium text-gray-500 mb-1">Plan</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-1">Plan/Recall</h4>
           <p className="text-gray-900 whitespace-pre-line">{plan?.plan || 'No plan provided'}</p>
           
           {plan?.next_appointment && (
