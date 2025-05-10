@@ -1,9 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 
 interface ProgramEligibilityProps {
   programEligibility: {
@@ -15,13 +13,9 @@ interface ProgramEligibilityProps {
     elig_dmp_khk: boolean;
     elig_dmp_obesity: boolean;
   };
-  onChange?: (field: string, value: any) => void;
-  editable?: boolean;
 }
 
-const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programEligibility, onChange, editable = false }) => {
-  const [isEditing, setIsEditing] = useState(editable);
-  
+const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programEligibility }) => {
   if (!programEligibility) return null;
 
   const eligibilityItems = [
@@ -36,41 +30,18 @@ const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programE
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold">Program Eligibility</CardTitle>
-          {onChange && (
-            <div className="flex items-center gap-2">
-              <Label htmlFor="edit-eligibility" className="text-xs">Edit</Label>
-              <Switch 
-                id="edit-eligibility"
-                checked={isEditing} 
-                onCheckedChange={setIsEditing}
-                aria-label="Toggle edit mode"
-              />
-            </div>
-          )}
-        </div>
+        <CardTitle className="text-lg font-semibold">Program Eligibility</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-3">
           {eligibilityItems.map((item) => (
             <div key={item.key} className="flex items-center">
-              {isEditing && onChange ? (
-                <input 
-                  type="checkbox"
-                  id={item.key}
-                  checked={Boolean(programEligibility[item.key as keyof typeof programEligibility])}
-                  onChange={(e) => onChange(item.key, e.target.checked)}
-                  className="mr-2"
-                />
+              {programEligibility[item.key as keyof typeof programEligibility] ? (
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
               ) : (
-                Boolean(programEligibility[item.key as keyof typeof programEligibility]) ? (
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-gray-300 mr-2" />
-                )
+                <XCircle className="h-5 w-5 text-gray-300 mr-2" />
               )}
-              <span className={Boolean(programEligibility[item.key as keyof typeof programEligibility]) 
+              <span className={programEligibility[item.key as keyof typeof programEligibility] 
                 ? 'font-medium' 
                 : 'text-gray-500'
               }>

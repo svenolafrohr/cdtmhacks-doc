@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -15,19 +14,6 @@ export function formatDate(dateString: string): string {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  } catch (e) {
-    return dateString;
-  }
-}
-
-export function formatDateShort(dateString: string): string {
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
     });
   } catch (e) {
     return dateString;

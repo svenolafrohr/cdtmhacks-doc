@@ -1,11 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { formatDate } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 
 interface ObservationsProps {
   observations: Array<{
@@ -14,74 +10,29 @@ interface ObservationsProps {
     type: string;
     result: string;
   }>;
-  onChange?: (index: number, field: string, value: any) => void;
-  editable?: boolean;
 }
 
-const ObservationsSection: React.FC<ObservationsProps> = ({ observations, onChange, editable = false }) => {
-  const [isEditing, setIsEditing] = useState(editable);
-  
+const ObservationsSection: React.FC<ObservationsProps> = ({ observations }) => {
   if (!observations || observations.length === 0) return null;
 
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold">Observations</CardTitle>
-          {onChange && (
-            <div className="flex items-center gap-2">
-              <Label htmlFor="edit-observations" className="text-xs">Edit</Label>
-              <Switch 
-                id="edit-observations"
-                checked={isEditing} 
-                onCheckedChange={setIsEditing}
-                aria-label="Toggle edit mode"
-              />
-            </div>
-          )}
-        </div>
+        <CardTitle className="text-lg font-semibold">Observations</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {observations.map((observation, index) => (
             <div key={index} className="pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
               <div className="flex justify-between items-start mb-1">
-                {isEditing && onChange ? (
-                  <>
-                    <Input
-                      value={observation.type}
-                      onChange={(e) => onChange(index, 'type', e.target.value)}
-                      className="font-medium mr-2 w-1/2"
-                      placeholder="Type"
-                    />
-                    <Input
-                      type="datetime-local"
-                      value={observation.datetime ? new Date(observation.datetime).toISOString().slice(0, 16) : ''}
-                      onChange={(e) => onChange(index, 'datetime', new Date(e.target.value).toISOString())}
-                      className="text-sm w-1/2"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div className="font-medium text-gray-900">
-                      {observation.type}
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      {observation.datetime ? formatDate(observation.datetime) : 'Date not available'}
-                    </span>
-                  </>
-                )}
+                <div className="font-medium text-gray-900">
+                  {observation.type} <span className="text-gray-500">(e.g., ECG, X-Ray)</span>
+                </div>
+                <span className="text-sm text-gray-500">
+                  {observation.datetime ? formatDate(observation.datetime) : 'Date not available'}
+                </span>
               </div>
-              {isEditing && onChange ? (
-                <Textarea
-                  value={observation.result}
-                  onChange={(e) => onChange(index, 'result', e.target.value)}
-                  className="w-full"
-                  placeholder="Result"
-                />
-              ) : (
-                <p className="text-gray-700">{observation.result}</p>
-              )}
+              <p className="text-gray-700">{observation.result}</p>
             </div>
           ))}
         </div>

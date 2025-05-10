@@ -64,7 +64,7 @@ export type Database = {
           observations: Json | null
           open_questions: Json | null
           other_insurance_card_data: Json | null
-          patient_id: number
+          pat_id: string
           plan: Json | null
           practitioners: Json | null
           prior_med_history: Json | null
@@ -94,7 +94,7 @@ export type Database = {
           observations?: Json | null
           open_questions?: Json | null
           other_insurance_card_data?: Json | null
-          patient_id: number
+          pat_id: string
           plan?: Json | null
           practitioners?: Json | null
           prior_med_history?: Json | null
@@ -124,7 +124,7 @@ export type Database = {
           observations?: Json | null
           open_questions?: Json | null
           other_insurance_card_data?: Json | null
-          patient_id?: number
+          pat_id?: string
           plan?: Json | null
           practitioners?: Json | null
           prior_med_history?: Json | null

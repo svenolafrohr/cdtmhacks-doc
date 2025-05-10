@@ -1,10 +1,6 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 
 interface ReviewOfSystemsProps {
   reviewOfSystems: Array<{
@@ -12,58 +8,22 @@ interface ReviewOfSystemsProps {
     system_name: string;
     details: string;
   }>;
-  onChange?: (index: number, field: string, value: any) => void;
-  editable?: boolean;
 }
 
-const ReviewOfSystemsSection: React.FC<ReviewOfSystemsProps> = ({ reviewOfSystems, onChange, editable = false }) => {
-  const [isEditing, setIsEditing] = useState(editable);
-  
+const ReviewOfSystemsSection: React.FC<ReviewOfSystemsProps> = ({ reviewOfSystems }) => {
   if (!reviewOfSystems || reviewOfSystems.length === 0) return null;
 
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold">Review of Systems</CardTitle>
-          {onChange && (
-            <div className="flex items-center gap-2">
-              <Label htmlFor="edit-systems" className="text-xs">Edit</Label>
-              <Switch 
-                id="edit-systems"
-                checked={isEditing} 
-                onCheckedChange={setIsEditing}
-                aria-label="Toggle edit mode"
-              />
-            </div>
-          )}
-        </div>
+        <CardTitle className="text-lg font-semibold">Review of Systems</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {reviewOfSystems.map((item, index) => (
             <div key={index} className="pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
-              {isEditing && onChange ? (
-                <>
-                  <Input
-                    value={item.system_name}
-                    onChange={(e) => onChange(index, 'system_name', e.target.value)}
-                    className="font-medium mb-2"
-                    placeholder="System name"
-                  />
-                  <Textarea
-                    value={item.details}
-                    onChange={(e) => onChange(index, 'details', e.target.value)}
-                    className="w-full"
-                    placeholder="Details"
-                  />
-                </>
-              ) : (
-                <>
-                  <h4 className="font-medium text-gray-900">{item.system_name}</h4>
-                  <p className="text-gray-700">{item.details}</p>
-                </>
-              )}
+              <h4 className="font-medium text-gray-900">{item.system_name}</h4>
+              <p className="text-gray-700">{item.details}</p>
             </div>
           ))}
         </div>
