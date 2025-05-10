@@ -38,7 +38,7 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
   };
 
   // Group by measurement type
-  const groupedData = samples.reduce((acc, item) => {
+  const groupedData = samples.reduce((acc: Record<string, Array<any>>, item) => {
     const measurementType = getMeasurementType(item.type);
     
     if (!acc[measurementType]) {
@@ -58,7 +58,7 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
     
     acc[measurementType].push(transformedItem);
     return acc;
-  }, {} as Record<string, Array<any>>);
+  }, {});
 
   const renderWearableData = (data: any) => {
     switch (data.measurement_type) {

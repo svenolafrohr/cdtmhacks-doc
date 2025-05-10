@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
@@ -70,8 +71,41 @@ const PatientDashboard = () => {
     fetchPatientRecord();
   }, []);
   
-  // Parse JSON fields from the patient record
-  const encounter = parseJsonbField(patientRecord?.encounter) || [];
+  // Define default values for each data type to satisfy TypeScript
+  const defaultEncounter = {
+    visit_date: '',
+    chief_complaint: '',
+    history_of_present_illness: ''
+  };
+  
+  const defaultVitalSigns = {
+    datetime: '',
+    weight: 0,
+    height: 0,
+    bmi: 0
+  };
+  
+  const defaultProgramEligibility = {
+    patient_id: '',
+    elig_hzv: false,
+    elig_dmp_diabetes: false,
+    elig_dmp_asthma: false,
+    elig_dmp_copd: false,
+    elig_dmp_khk: false,
+    elig_dmp_obesity: false
+  };
+  
+  const defaultAssessment = {
+    summary: ''
+  };
+  
+  const defaultPlan = {
+    plan: '',
+    next_appointment: ''
+  };
+  
+  // Parse JSON fields from the patient record with proper defaults
+  const encounter = parseJsonbField(patientRecord?.encounter) || defaultEncounter;
   const prior_med_history = parseJsonbField(patientRecord?.prior_med_history) || [];
   const diagnoses = parseJsonbField(patientRecord?.diagnoses) || [];
   const medications = parseJsonbField(patientRecord?.medications) || [];
@@ -79,17 +113,17 @@ const PatientDashboard = () => {
   const family_history = parseJsonbField(patientRecord?.family_history) || [];
   const social_history = parseJsonbField(patientRecord?.social_history) || [];
   const review_of_systems = parseJsonbField(patientRecord?.review_of_systems) || [];
-  const vital_signs = parseJsonbField(patientRecord?.vital_signs) || [];
+  const vital_signs = parseJsonbField(patientRecord?.vital_signs) || defaultVitalSigns;
   const labs = parseJsonbField(patientRecord?.labs) || [];
   const observations = parseJsonbField(patientRecord?.observations) || [];
   const wearable_observations = parseJsonbField(patientRecord?.wearable_observations) || null;
   const immunizations = parseJsonbField(patientRecord?.immunizations) || [];
   const procedures = parseJsonbField(patientRecord?.procedures) || [];
   const practitioners = parseJsonbField(patientRecord?.practitioners) || [];
-  const program_eligibility = parseJsonbField(patientRecord?.program_eligibility) || {};
+  const program_eligibility = parseJsonbField(patientRecord?.program_eligibility) || defaultProgramEligibility;
   const open_questions = parseJsonbField(patientRecord?.open_questions) || [];
-  const assessment = parseJsonbField(patientRecord?.assessment) || { summary: "" };
-  const plan = parseJsonbField(patientRecord?.plan) || { plan: "", next_appointment: "" };
+  const assessment = parseJsonbField(patientRecord?.assessment) || defaultAssessment;
+  const plan = parseJsonbField(patientRecord?.plan) || defaultPlan;
 
   if (loading) {
     return (
