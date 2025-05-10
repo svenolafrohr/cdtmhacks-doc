@@ -50,7 +50,10 @@ const PatientDashboard = () => {
           textColor="text-amber-800"
           title="Anamnese"
           content="This is a string"
-        />
+        >
+          {/* Empty children prop to satisfy TypeScript */}
+          <></>
+        </CategorySection>
         
         {/* Befund */}
         <CategorySection 
@@ -60,7 +63,10 @@ const PatientDashboard = () => {
           title="Befund"
           content="Also a string. (with attachments)"
           hasAttachment={true}
-        />
+        >
+          {/* Empty children prop to satisfy TypeScript */}
+          <></>
+        </CategorySection>
         
         {/* Procedere */}
         <CategorySection 
@@ -69,7 +75,10 @@ const PatientDashboard = () => {
           textColor="text-blue-800"
           title="Procedere"
           content="Another string"
-        />
+        >
+          {/* Empty children prop to satisfy TypeScript */}
+          <></>
+        </CategorySection>
         
         {/* Folgetermin */}
         <CategorySection 
