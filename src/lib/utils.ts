@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -18,5 +17,21 @@ export function formatDate(dateString: string): string {
     });
   } catch (e) {
     return dateString;
+  }
+}
+
+// Function to safely parse JSON from jsonb fields
+export function parseJsonbField<T>(jsonbField: any): T | null {
+  if (!jsonbField) return null;
+  
+  try {
+    // If it's already an object, return it
+    if (typeof jsonbField === 'object') return jsonbField as T;
+    
+    // Otherwise try to parse it
+    return JSON.parse(jsonbField) as T;
+  } catch (e) {
+    console.error('Error parsing JSONB field:', e);
+    return null;
   }
 }

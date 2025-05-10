@@ -1,16 +1,9 @@
 
-import React, { useState } from 'react';
-import { 
-  patient, 
-  visits, 
-  vitals, 
-  diagnoses, 
-  medicalHistory, 
-  medications,
-  vitalsHistory
-} from '@/data/mockData';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { parseJsonbField } from '@/lib/utils';
 
-// Components
+// UI components
 import { Search, Paperclip, ChevronDown, X, Mic } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -38,248 +31,94 @@ import ProgramEligibilitySection from '@/components/medical/ProgramEligibilitySe
 import OpenQuestionsSection from '@/components/medical/OpenQuestionsSection';
 import AssessmentPlanSection from '@/components/medical/AssessmentPlanSection';
 
-// Sample medical data
-const sampleMedicalData = {
-  encounter: {
-    visit_date: "2023-04-15T10:30:00Z",
-    chief_complaint: "Persistent cough and fever",
-    history_of_present_illness: "Patient reports a worsening cough over the past week accompanied by fever and fatigue. Symptoms began after exposure to a sick coworker."
-  },
-  prior_med_history: [
-    {
-      event_datetime: "2022-06-10T14:00:00Z",
-      event_type: "Surgery",
-      event_details: "Appendectomy - laparoscopic procedure without complications"
-    },
-    {
-      event_datetime: "2021-02-20T09:15:00Z",
-      event_type: "Hospitalization",
-      event_details: "Pneumonia - treated with IV antibiotics for 3 days"
-    }
-  ],
-  diagnoses: [
-    {
-      diagnosis_date: "2023-04-15T11:15:00Z",
-      diagnosis_name: "Acute bronchitis",
-      icd10_code: "J20.9",
-      diagnosis_details: "Viral etiology suspected, chest x-ray negative for pneumonia"
-    },
-    {
-      diagnosis_date: "2022-10-05T15:30:00Z",
-      diagnosis_name: "Hypertension",
-      icd10_code: "I10",
-      diagnosis_details: "Essential (primary) hypertension, well-controlled with medication"
-    }
-  ],
-  medications: [
-    {
-      name: "Lisinopril",
-      dose: "10mg",
-      amount_morning: 1,
-      amount_noon: 0,
-      amount_evening: 0,
-      amount_night: 0,
-      comment: "Take on empty stomach"
-    },
-    {
-      name: "Azithromycin",
-      dose: "250mg",
-      amount_morning: 1,
-      amount_noon: 0,
-      amount_evening: 0,
-      amount_night: 0,
-      comment: "5-day course for bronchitis"
-    }
-  ],
-  allergies: [
-    {
-      patient_id: "pat123",
-      icd10_code: "Z88.0 (Penicillin)"
-    },
-    {
-      patient_id: "pat123",
-      icd10_code: "Z91.013 (Peanuts)"
-    }
-  ],
-  family_history: [
-    {
-      relative_name: "Father",
-      history: "Type 2 diabetes, diagnosed at age 45. Myocardial infarction at age 62."
-    },
-    {
-      relative_name: "Mother",
-      history: "Hypertension, breast cancer at age 51, in remission."
-    }
-  ],
-  social_history: [
-    {
-      patient_id: "pat123",
-      drinking: "Social drinker, 2-4 drinks per week",
-      smoking: "Former smoker, quit 5 years ago",
-      drugs: "Denies illicit drug use",
-      marital_status: "Married",
-      kids: 2,
-      job: "Software Engineer"
-    }
-  ],
-  review_of_systems: [
-    {
-      encounter_id: "enc123",
-      system_name: "Respiratory",
-      details: "Productive cough, no hemoptysis, mild dyspnea on exertion"
-    },
-    {
-      encounter_id: "enc123",
-      system_name: "Cardiovascular",
-      details: "No chest pain, no palpitations, no edema"
-    }
-  ],
-  vital_signs: {
-    datetime: "2023-04-15T10:45:00Z",
-    weight: 78,
-    height: 175,
-    bmi: 25.5
-  },
-  lab_results: [
-    {
-      datetime: "2023-04-15T11:30:00Z",
-      analyte: "White Blood Cell Count",
-      level: 12.5,
-      unit: "K/µL",
-      method: "Flow Cytometry",
-      ref_range_lower: 4.5,
-      ref_range_upper: 11.0,
-      is_abnormal: true,
-      lab_provider: {
-        name: "City Medical Laboratory",
-        address: "123 Main Street, Anytown"
-      }
-    },
-    {
-      datetime: "2023-04-15T11:30:00Z",
-      analyte: "C-Reactive Protein",
-      level: 15,
-      unit: "mg/L",
-      method: "Immunoturbidimetric",
-      ref_range_lower: 0,
-      ref_range_upper: 10,
-      is_abnormal: true,
-      lab_provider: {
-        name: "City Medical Laboratory",
-        address: "123 Main Street, Anytown"
-      }
-    }
-  ],
-  observations: [
-    {
-      encounter_id: "enc123",
-      datetime: "2023-04-15T11:00:00Z",
-      type: "Chest X-Ray",
-      result: "No acute findings, mild bronchial wall thickening consistent with bronchitis"
-    }
-  ],
-  wearable_observations: [
-    {
-      measurement_type: "blood_pressure",
-      datetime: "2023-04-14T08:30:00Z",
-      systolic: 132,
-      diastolic: 85,
-      is_abnormal: true
-    },
-    {
-      measurement_type: "heart_rate",
-      datetime: "2023-04-14T14:15:00Z",
-      frequency: 82,
-      is_abnormal: false
-    },
-    {
-      measurement_type: "blood_glucose",
-      datetime: "2023-04-14T07:00:00Z",
-      analyte: "Glucose",
-      level: 105,
-      unit: "mg/dL",
-      method: "CGM",
-      ref_range_lower: 70,
-      ref_range_upper: 100,
-      is_abnormal: true
-    }
-  ],
-  immunizations: [
-    {
-      patient_id: "pat123",
-      date: "2022-10-15",
-      disease: "Influenza",
-      vaccine_name: "Fluzone Quadrivalent",
-      batch_number: "FL4982",
-      best_before: "2023-06-30",
-      doctor_name: "Dr. Emily Johnson",
-      doctor_address: {
-        street: "456 Healthcare Blvd",
-        city: "Cityville",
-        zip: "12345"
-      },
-      details: "Annual vaccination"
-    }
-  ],
-  procedures: [
-    {
-      patient_id: "pat123",
-      type: "Spirometry",
-      date: "2023-04-15",
-      details: "FEV1/FVC: 0.78, within normal limits"
-    }
-  ],
-  practitioners: [
-    {
-      last_name: "Johnson",
-      first_name: "Emily",
-      function: "Primary Care Physician"
-    },
-    {
-      last_name: "Wong",
-      first_name: "David",
-      function: "Pulmonologist"
-    }
-  ],
-  program_eligibility: {
-    patient_id: "pat123",
-    elig_hzv: true,
-    elig_dmp_diabetes: false,
-    elig_dmp_asthma: true,
-    elig_dmp_copd: false,
-    elig_dmp_khk: false,
-    elig_dmp_obesity: false
-  },
-  open_questions: [
-    {
-      question_id: "q1",
-      questions: "Should patient get allergy testing for seasonal allergies?"
-    },
-    {
-      question_id: "q2",
-      questions: "Follow up on previous cardiac stress test from last year"
-    }
-  ],
-  assessment: {
-    summary: "Patient presents with acute bronchitis, likely viral in origin. Hypertension remains well-controlled. Recent wearable data indicates slightly elevated blood glucose levels that should be monitored."
-  },
-  plan: {
-    plan: "1. Complete 5-day course of azithromycin\n2. Increase fluid intake\n3. Rest and use humidifier at night\n4. Monitor blood glucose with home device\n5. Continue current hypertension medication",
-    next_appointment: "2023-04-29T10:00:00Z"
-  }
-};
-
 const PatientDashboard = () => {
-  const sortedVisits = [...visits].sort((a, b) => 
-    new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [patientRecord, setPatientRecord] = useState<any | null>(null);
+
+  // Fetch patient record data from Supabase
+  useEffect(() => {
+    const fetchPatientRecord = async () => {
+      try {
+        setLoading(true);
+        
+        // Get the most recent patient record
+        const { data, error } = await supabase
+          .from('patient_record')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(1);
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (data && data.length > 0) {
+          setPatientRecord(data[0]);
+          console.log('Patient record retrieved:', data[0]);
+        } else {
+          console.log('No patient records found');
+          setError('No patient records found');
+        }
+      } catch (err: any) {
+        console.error('Error fetching patient record:', err);
+        setError(err.message || 'Failed to fetch patient data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPatientRecord();
+  }, []);
   
-  const [selectedVisitId, setSelectedVisitId] = useState(sortedVisits[0]?.id || '');
+  // Parse JSON fields from the patient record
+  const encounter = parseJsonbField(patientRecord?.encounter);
+  const prior_med_history = parseJsonbField(patientRecord?.prior_med_history);
+  const diagnoses = parseJsonbField(patientRecord?.diagnoses);
+  const medications = parseJsonbField(patientRecord?.medications);
+  const allergies = parseJsonbField(patientRecord?.allergies);
+  const family_history = parseJsonbField(patientRecord?.family_history);
+  const social_history = parseJsonbField(patientRecord?.social_history);
+  const review_of_systems = parseJsonbField(patientRecord?.review_of_systems);
+  const vital_signs = parseJsonbField(patientRecord?.vital_signs);
+  const labs = parseJsonbField(patientRecord?.labs);
+  const observations = parseJsonbField(patientRecord?.observations);
+  const wearable_observations = parseJsonbField(patientRecord?.wearable_observations);
+  const immunizations = parseJsonbField(patientRecord?.immunizations);
+  const procedures = parseJsonbField(patientRecord?.procedures);
+  const practitioners = parseJsonbField(patientRecord?.practitioners);
+  const program_eligibility = parseJsonbField(patientRecord?.program_eligibility);
+  const open_questions = parseJsonbField(patientRecord?.open_questions);
+  const assessment = parseJsonbField(patientRecord?.assessment);
+  const plan = parseJsonbField(patientRecord?.plan);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-xl">Loading patient data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen">
+        <div className="text-xl text-red-600 mb-4">Error: {error}</div>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 pb-20">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-semibold text-teal-800">GKV</h1>
+        {patientRecord && (
+          <div className="text-right">
+            <h2 className="font-medium">{patientRecord.first_name} {patientRecord.last_name}</h2>
+            <p className="text-sm text-gray-500">ID: {patientRecord.patient_id}</p>
+          </div>
+        )}
       </div>
       
       {/* Search bar */}
@@ -295,69 +134,67 @@ const PatientDashboard = () => {
       </div>
       
       {/* Medical categories */}
-      <Accordion type="multiple" className="space-y-4 mt-4">
-        {/* First section removed - No more Anamnese, Befund, Procedere, Folgetermin */}
-        
-        {/* Second section - Encounter & Diagnostics */}
+      <Accordion type="multiple" className="space-y-4 mt-4" defaultValue={["encounter", "medical-history", "patient-context", "care-team"]}>
+        {/* First section - Encounter & Diagnostics */}
         <AccordionItem value="encounter" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <span className="text-lg font-medium">Encounter & Diagnostics</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <EncounterSection encounter={sampleMedicalData.encounter} />
-              <DiagnosesSection diagnoses={sampleMedicalData.diagnoses} />
-              <VitalSignsSection vitalSigns={sampleMedicalData.vital_signs} />
-              <ObservationsSection observations={sampleMedicalData.observations} />
-              <ReviewOfSystemsSection reviewOfSystems={sampleMedicalData.review_of_systems} />
-              <LabResultsSection labResults={sampleMedicalData.lab_results} />
-              <WearableDataSection wearableObservations={sampleMedicalData.wearable_observations} />
+              <EncounterSection encounter={encounter} />
+              <DiagnosesSection diagnoses={diagnoses} />
+              <VitalSignsSection vitalSigns={vital_signs} />
+              <ObservationsSection observations={observations} />
+              <ReviewOfSystemsSection reviewOfSystems={review_of_systems} />
+              <LabResultsSection labResults={labs} />
+              <WearableDataSection wearableObservations={wearable_observations} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
-        {/* Third section - Medical History */}
+        {/* Second section - Medical History */}
         <AccordionItem value="medical-history" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <span className="text-lg font-medium">Medical History</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <MedicalHistorySection medicalHistory={sampleMedicalData.prior_med_history} />
-              <AllergiesSection allergies={sampleMedicalData.allergies} />
-              <MedicationsSection medications={sampleMedicalData.medications} />
-              <ImmunizationsSection immunizations={sampleMedicalData.immunizations} />
-              <ProceduresSection procedures={sampleMedicalData.procedures} />
+              <MedicalHistorySection medicalHistory={prior_med_history} />
+              <AllergiesSection allergies={allergies} />
+              <MedicationsSection medications={medications} />
+              <ImmunizationsSection immunizations={immunizations} />
+              <ProceduresSection procedures={procedures} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
-        {/* Fourth section - Patient Context */}
+        {/* Third section - Patient Context */}
         <AccordionItem value="patient-context" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <span className="text-lg font-medium">Patient Context</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <FamilyHistorySection familyHistory={sampleMedicalData.family_history} />
-              <SocialHistorySection socialHistory={sampleMedicalData.social_history} />
-              <ProgramEligibilitySection programEligibility={sampleMedicalData.program_eligibility} />
+              <FamilyHistorySection familyHistory={family_history} />
+              <SocialHistorySection socialHistory={social_history} />
+              <ProgramEligibilitySection programEligibility={program_eligibility} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
-        {/* Fifth section - Care Team & Plan */}
+        {/* Fourth section - Care Team & Plan */}
         <AccordionItem value="care-team" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
             <span className="text-lg font-medium">Care Team & Plan</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <PractitionersSection practitioners={sampleMedicalData.practitioners} />
-              <OpenQuestionsSection openQuestions={sampleMedicalData.open_questions} />
+              <PractitionersSection practitioners={practitioners} />
+              <OpenQuestionsSection openQuestions={open_questions} />
               <AssessmentPlanSection 
-                assessment={sampleMedicalData.assessment} 
-                plan={sampleMedicalData.plan} 
+                assessment={assessment} 
+                plan={plan} 
               />
             </div>
           </AccordionContent>
@@ -369,8 +206,6 @@ const PatientDashboard = () => {
         <span className="flex items-center justify-center w-6 h-6 border border-gray-400 rounded-full mr-2">+</span>
         Neuen Eintrag einfügen
       </button>
-      
-      {/* "Diagnosen" and "Leistung" sections removed as they were related to the removed categories */}
       
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center bg-white border-t">

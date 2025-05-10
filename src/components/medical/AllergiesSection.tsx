@@ -1,12 +1,10 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { parseJsonbField } from '@/lib/utils';
 
 interface AllergiesProps {
-  allergies: Array<{
-    patient_id: string;
-    icd10_code: string;
-  }>;
+  allergies: any[] | null;
 }
 
 const AllergiesSection: React.FC<AllergiesProps> = ({ allergies }) => {
@@ -24,7 +22,7 @@ const AllergiesSection: React.FC<AllergiesProps> = ({ allergies }) => {
               key={index} 
               className="bg-red-50 text-red-700 text-sm px-3 py-1 rounded-full"
             >
-              {allergy.icd10_code}
+              {allergy.icd10_code || allergy.name || "Unknown allergy"}
             </span>
           ))}
         </div>
