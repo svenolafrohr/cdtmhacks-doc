@@ -11,7 +11,7 @@ const ImportPage = () => {
   const { id } = useParams();
   const { toast: shadcnToast } = useToast();
   
-  // Create FHIR MIO data that conforms to the specified format
+  // Create FHIR MIO data with dynamic values
   const fhirData = {
     resourceType: "Bundle",
     id: "bundle-transaction",
@@ -23,7 +23,7 @@ const ImportPage = () => {
       {
         resource: {
           resourceType: "Patient",
-          id: "example-patient",
+          id: `patient-${id || Math.random().toString(36).substring(2, 11)}`,
           meta: {
             profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_MR_Patient"]
           },
@@ -41,7 +41,7 @@ const ImportPage = () => {
       {
         resource: {
           resourceType: "Observation",
-          id: "blood-pressure",
+          id: `bp-${new Date().getTime()}`,
           meta: {
             profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_Observation_BloodPressure"]
           },
@@ -68,7 +68,7 @@ const ImportPage = () => {
             text: "Blood pressure systolic & diastolic"
           },
           subject: {
-            reference: "Patient/example-patient"
+            reference: `Patient/patient-${id || Math.random().toString(36).substring(2, 11)}`
           },
           effectiveDateTime: new Date().toISOString(),
           component: [
@@ -83,7 +83,7 @@ const ImportPage = () => {
                 ]
               },
               valueQuantity: {
-                value: 120,
+                value: Math.floor(Math.random() * (140 - 110)) + 110,
                 unit: "mmHg",
                 system: "http://unitsofmeasure.org",
                 code: "mm[Hg]"
@@ -100,7 +100,7 @@ const ImportPage = () => {
                 ]
               },
               valueQuantity: {
-                value: 80,
+                value: Math.floor(Math.random() * (90 - 70)) + 70,
                 unit: "mmHg",
                 system: "http://unitsofmeasure.org",
                 code: "mm[Hg]"
@@ -112,7 +112,7 @@ const ImportPage = () => {
       {
         resource: {
           resourceType: "MedicationStatement",
-          id: "med-statement",
+          id: `med-${new Date().getTime()}`,
           meta: {
             profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_MedicationStatement"]
           },
@@ -127,10 +127,10 @@ const ImportPage = () => {
             ]
           },
           subject: {
-            reference: "Patient/example-patient"
+            reference: `Patient/patient-${id || Math.random().toString(36).substring(2, 11)}`
           },
           effectivePeriod: {
-            start: "2023-01-01"
+            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
           },
           dosage: [
             {
@@ -158,7 +158,7 @@ const ImportPage = () => {
       {
         resource: {
           resourceType: "Condition",
-          id: "condition-example",
+          id: `condition-${new Date().getTime()}`,
           meta: {
             profile: ["https://fhir.kbv.de/StructureDefinition/KBV_PR_MIO_Condition"]
           },
@@ -202,9 +202,9 @@ const ImportPage = () => {
             text: "Hypertonie"
           },
           subject: {
-            reference: "Patient/example-patient"
+            reference: `Patient/patient-${id || Math.random().toString(36).substring(2, 11)}`
           },
-          recordedDate: "2023-01-15"
+          recordedDate: new Date().toISOString().split('T')[0]
         }
       }
     ]
