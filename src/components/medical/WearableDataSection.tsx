@@ -3,39 +3,65 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
 
+interface WearableSample {
+  date: string;
+  type: string;
+  unit: string;
+  value: number;
+  device: string;
+  source: string;
+  metadata?: {
+    HKMetadataKeyHeartRateMotionContext?: number;
+  };
+}
+
+interface WearableData {
+  samples?: WearableSample[];
+}
+
 interface WearableDataProps {
-  wearableObservations: Array<{
-    measurement_type: string;
-    datetime: string;
-    systolic?: number;
-    diastolic?: number;
-    frequency?: number;
-    analyte?: string;
-    level?: number;
-    unit?: string;
-    method?: string;
-    ref_range_lower?: number;
-    ref_range_upper?: number;
-    is_abnormal?: boolean;
-  }>;
+  wearableObservations: WearableData | null;
 }
 
 const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations }) => {
-  if (!wearableObservations || wearableObservations.length === 0) return null;
+  // Early return if no data
+  if (!wearableObservations || !wearableObservations.samples || wearableObservations.samples.length === 0) return null;
+  
+  // Use the samples array from the wearable data structure
+  const samples = wearableObservations.samples;
 
-  const renderWearableData = (data: WearableDataProps['wearableObservations'][0]) => {
+  // Transform Apple Health data types to more readable formats
+  const getMeasurementType = (type: string) => {
+    if (type === 'HKQuantityTypeIdentifierHeartRate') return 'heart_rate';
+    if (type === 'HKQuantityTypeIdentifierBloodPressureSystolic') return 'blood_pressure';
+    return type;
+  };
+
+  // Group by measurement type
+  const groupedData = samples.reduce((acc, item) => {
+    const measurementType = getMeasurementType(item.type);
+    
+    if (!acc[measurementType]) {
+      acc[measurementType] = [];
+    }
+    
+    // Transform the data to match the expected format for rendering
+    const transformedItem = {
+      measurement_type: measurementType,
+      datetime: item.date,
+      frequency: measurementType === 'heart_rate' ? item.value * 60 : undefined, // Convert from count/s to bpm
+      level: measurementType !== 'heart_rate' ? item.value : undefined,
+      unit: item.unit,
+      method: item.source,
+      is_abnormal: false // We don't have abnormal data in the sample
+    };
+    
+    acc[measurementType].push(transformedItem);
+    return acc;
+  }, {} as Record<string, Array<any>>);
+
+  const renderWearableData = (data: any) => {
     switch (data.measurement_type) {
-      case 'blood_pressure':
-        return (
-          <div className="flex">
-            <span className="font-medium">{data.systolic}/{data.diastolic}</span>
-            <span className="ml-1">mmHg</span>
-            {data.is_abnormal && (
-              <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
-            )}
-          </div>
-        );
-      
       case 'heart_rate':
         return (
           <div className="flex">
@@ -47,37 +73,36 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
           </div>
         );
         
+      case 'blood_pressure':
+        return (
+          <div className="flex">
+            <span className="font-medium">{data.systolic}/{data.diastolic}</span>
+            <span className="ml-1">mmHg</span>
+            {data.is_abnormal && (
+              <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
+            )}
+          </div>
+        );
+      
       default:
-        if (data.analyte) {
-          return (
-            <div>
-              <div className="flex">
-                <span className="font-medium">{data.level}</span>
-                <span className="ml-1">{data.unit}</span>
-                {data.is_abnormal && (
-                  <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
-                )}
-              </div>
-              {(data.ref_range_lower !== undefined && data.ref_range_upper !== undefined) && (
-                <div className="text-xs text-gray-500 mt-0.5">
-                  Reference: {data.ref_range_lower}-{data.ref_range_upper} {data.unit}
-                </div>
+        return (
+          <div>
+            <div className="flex">
+              <span className="font-medium">{data.level}</span>
+              <span className="ml-1">{data.unit}</span>
+              {data.is_abnormal && (
+                <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Abnormal</span>
               )}
             </div>
-          );
-        }
-        return <div className="text-gray-500">No details available</div>;
+            {(data.ref_range_lower !== undefined && data.ref_range_upper !== undefined) && (
+              <div className="text-xs text-gray-500 mt-0.5">
+                Reference: {data.ref_range_lower}-{data.ref_range_upper} {data.unit}
+              </div>
+            )}
+          </div>
+        );
     }
   };
-
-  // Group by measurement type
-  const groupedData = wearableObservations.reduce((acc, item) => {
-    if (!acc[item.measurement_type]) {
-      acc[item.measurement_type] = [];
-    }
-    acc[item.measurement_type].push(item);
-    return acc;
-  }, {} as Record<string, typeof wearableObservations>);
 
   return (
     <Card className="mb-4">
