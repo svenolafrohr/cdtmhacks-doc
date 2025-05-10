@@ -29,7 +29,15 @@ export function parseJsonbField<T>(jsonbField: any): T | null {
     if (typeof jsonbField === 'object') return jsonbField as T;
     
     // Otherwise try to parse it
-    return JSON.parse(jsonbField) as T;
+    const parsed = JSON.parse(jsonbField) as T;
+    
+    // Check if the result is an empty object
+    if (parsed !== null && typeof parsed === 'object' && 
+        Object.keys(parsed).length === 0 && !Array.isArray(parsed)) {
+      return null;
+    }
+    
+    return parsed;
   } catch (e) {
     console.error('Error parsing JSONB field:', e);
     return null;

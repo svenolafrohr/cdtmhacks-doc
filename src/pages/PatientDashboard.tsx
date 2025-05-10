@@ -347,7 +347,7 @@ const PatientDashboard = () => {
         </div>
         
         <Button className="px-10 py-6 bg-white border border-teal-700 text-teal-700 hover:bg-teal-50">
-          Speichern
+          Importieren
         </Button>
       </div>
     </div>

@@ -24,11 +24,40 @@ interface WearableDataProps {
 }
 
 const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations }) => {
-  // Early return if no data or samples array is missing/empty
-  if (!wearableObservations || !wearableObservations.samples || wearableObservations.samples.length === 0) return null;
+  // Early return if no data is present, but still render the component with a message
+  if (!wearableObservations) {
+    return (
+      <Card className="mb-4">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold">Wearable Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-4 text-gray-500">
+            Keine Wearable-Daten vorhanden
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   
-  // Use the samples array from the wearable data structure
-  const samples = wearableObservations.samples;
+  // Access samples array safely, defaulting to an empty array if not present
+  const samples = wearableObservations.samples || [];
+  
+  // If samples array is empty, show empty state
+  if (samples.length === 0) {
+    return (
+      <Card className="mb-4">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold">Wearable Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-4 text-gray-500">
+            Keine Wearable-Daten vorhanden
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Transform Apple Health data types to more readable formats
   const getMeasurementType = (type: string) => {
