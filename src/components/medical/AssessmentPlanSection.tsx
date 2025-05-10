@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
-import { Calendar } from 'lucide-react';
+import { Calendar, Pencil } from 'lucide-react';
 
 interface AssessmentPlanProps {
   assessment: {
@@ -25,7 +25,10 @@ const AssessmentPlanSection: React.FC<AssessmentPlanProps> = ({ assessment, plan
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Assessment & Plan</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg font-semibold">Assessment & Plan</CardTitle>
+          <Pencil className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4">

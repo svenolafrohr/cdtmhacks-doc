@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ImportPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { toast } = useToast();
   
   // Create sample JSON data to mimic HL7 FHIR MIO objects
   const fhirData = {
@@ -208,9 +210,17 @@ const ImportPage = () => {
   };
   
   const handleConfirm = () => {
-    // In a real app, this would send the data to the EHR system
-    // Here we just navigate back to the patient dashboard
-    navigate(`/patient/${id || ''}`);
+    // Show a confirmation toast
+    toast({
+      title: "Übertragung erfolgreich",
+      description: "Die FHIR MIO Objekte wurden erfolgreich übertragen",
+      duration: 4000,
+    });
+    
+    // Navigate after 4 seconds
+    setTimeout(() => {
+      navigate('/patients');
+    }, 4000);
   };
   
   return (

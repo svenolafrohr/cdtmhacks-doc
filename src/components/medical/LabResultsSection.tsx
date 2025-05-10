@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { AlertCircle, Pencil } from 'lucide-react';
 
 interface LabResultsProps {
   labResults: Array<{
@@ -31,9 +32,12 @@ interface LabResultsProps {
 const LabResultsSection: React.FC<LabResultsProps> = ({ labResults, colorScheme }) => {
   if (!labResults || labResults.length === 0) {
     return (
-      <Card className="mb-4">
+      <Card className="mb-4 relative">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-semibold">Lab Results</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg font-semibold">Lab Results</CardTitle>
+            <Pencil className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-pointer" />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="py-3 text-center text-gray-500">No lab results recorded</div>
@@ -55,7 +59,10 @@ const LabResultsSection: React.FC<LabResultsProps> = ({ labResults, colorScheme 
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Lab Results</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg font-semibold">Lab Results</CardTitle>
+          <Pencil className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-pointer" />
+        </div>
       </CardHeader>
       <CardContent>
         {Object.entries(groupedByDate).map(([date, results], dateIndex) => (
@@ -82,13 +89,16 @@ const LabResultsSection: React.FC<LabResultsProps> = ({ labResults, colorScheme 
                         {result.ref_range_lower}-{result.ref_range_upper} {result.unit}
                       </TableCell>
                       <TableCell>
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          result.is_abnormal 
-                            ? colorScheme ? `${colorScheme.highlight} ${colorScheme.highlightText}` : 'bg-red-100 text-red-700' 
-                            : 'bg-green-100 text-green-700'
-                        }`}>
-                          {result.is_abnormal ? 'Abnormal' : 'Normal'}
-                        </span>
+                        <div className="flex items-center">
+                          {result.is_abnormal ? (
+                            <>
+                              <AlertCircle className="h-4 w-4 text-red-600 mr-1" />
+                              <span>Abnormal</span>
+                            </>
+                          ) : (
+                            <span>Normal</span>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
