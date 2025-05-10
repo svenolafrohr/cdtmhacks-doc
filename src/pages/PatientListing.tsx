@@ -116,7 +116,7 @@ const PatientListing = () => {
                   {filteredPatients.map((patient) => (
                     <TableRow key={patient.id} className="cursor-pointer hover:bg-gray-50">
                       <TableCell className="whitespace-nowrap">
-                        {formatDate(patient.created_at)}
+                        {formatDate(patient.created_at, true)}
                       </TableCell>
                       <TableCell>{patient.patient_id}</TableCell>
                       <TableCell>

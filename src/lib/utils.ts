@@ -6,9 +6,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(dateString: string): string {
+export function formatDate(dateString: string, includeTime: boolean = false): string {
   try {
     const date = new Date(dateString);
+    
+    if (includeTime) {
+      // Include date and time
+      return date.toLocaleString('de-DE', {
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    
     // Only show date without time
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
