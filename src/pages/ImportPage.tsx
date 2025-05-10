@@ -1,14 +1,14 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from "sonner";
 
 const ImportPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { toast } = useToast();
+  const { toast: shadcnToast } = useToast();
   
   // Create sample JSON data to mimic HL7 FHIR MIO objects
   const fhirData = {
@@ -210,17 +210,15 @@ const ImportPage = () => {
   };
   
   const handleConfirm = () => {
-    // Show a confirmation toast
-    toast({
-      title: "Übertragung erfolgreich",
+    // Show confirmation with OK button using Sonner toast
+    toast("Übertragung erfolgreich", {
       description: "Die FHIR MIO Objekte wurden erfolgreich übertragen",
       duration: 4000,
+      action: {
+        label: "OK",
+        onClick: () => navigate('/patients')
+      }
     });
-    
-    // Navigate after 4 seconds
-    setTimeout(() => {
-      navigate('/patients');
-    }, 4000);
   };
   
   return (
