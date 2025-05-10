@@ -25,7 +25,7 @@ export function parseJsonbField<T>(jsonbField: any): T | null {
   if (!jsonbField) return null;
   
   try {
-    // If it's already an object, return it
+    // If it's already an object/array, return it
     if (typeof jsonbField === 'object') return jsonbField as T;
     
     // Otherwise try to parse it
