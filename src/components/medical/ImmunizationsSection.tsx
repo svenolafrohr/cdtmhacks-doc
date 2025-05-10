@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Toggle } from '@/components/ui/toggle';
-import { Pencil } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface ImmunizationsProps {
   immunizations: Array<{
@@ -33,14 +33,15 @@ const ImmunizationsSection: React.FC<ImmunizationsProps> = ({ immunizations, onC
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold">Immunizations</CardTitle>
           {onChange && (
-            <Toggle 
-              className="h-8 w-8 p-0 rounded-full" 
-              pressed={isEditing} 
-              onPressedChange={setIsEditing}
-              aria-label="Toggle edit mode"
-            >
-              <Pencil className="h-4 w-4" />
-            </Toggle>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="edit-immunizations" className="text-xs">Edit</Label>
+              <Switch 
+                id="edit-immunizations"
+                checked={isEditing} 
+                onCheckedChange={setIsEditing}
+                aria-label="Toggle edit mode"
+              />
+            </div>
           )}
         </div>
       </CardHeader>

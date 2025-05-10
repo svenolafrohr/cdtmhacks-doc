@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatDate } from '@/lib/utils';
-import { Toggle } from '@/components/ui/toggle';
-import { Pencil } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface VitalSignsProps {
   vitalSigns: {
@@ -32,14 +32,15 @@ const VitalSignsSection: React.FC<VitalSignsProps> = ({ vitalSigns, onChange, ed
               {vitalSigns.datetime ? formatDate(vitalSigns.datetime) : 'Date not available'}
             </span>
             {onChange && (
-              <Toggle 
-                className="h-8 w-8 p-0 rounded-full" 
-                pressed={isEditing} 
-                onPressedChange={setIsEditing}
-                aria-label="Toggle edit mode"
-              >
-                <Pencil className="h-4 w-4" />
-              </Toggle>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="edit-vitals" className="text-xs">Edit</Label>
+                <Switch 
+                  id="edit-vitals"
+                  checked={isEditing} 
+                  onCheckedChange={setIsEditing}
+                  aria-label="Toggle edit mode"
+                />
+              </div>
             )}
           </div>
         </div>
