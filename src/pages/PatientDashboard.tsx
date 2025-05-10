@@ -296,59 +296,7 @@ const PatientDashboard = () => {
       
       {/* Medical categories */}
       <Accordion type="multiple" className="space-y-4 mt-4">
-        {/* First section - Main categories */}
-        <AccordionItem value="main-categories" className="border-none">
-          <div className="space-y-4">
-            {/* Anamnese */}
-            <CategorySection 
-              letter="A" 
-              bgColor="bg-amber-100" 
-              textColor="text-amber-800"
-              title="Anamnese"
-              content="This is a string"
-            >
-              <></>
-            </CategorySection>
-            
-            {/* Befund */}
-            <CategorySection 
-              letter="B" 
-              bgColor="bg-amber-100" 
-              textColor="text-amber-800"
-              title="Befund"
-              content="Also a string. (with attachments)"
-              hasAttachment={true}
-            >
-              <></>
-            </CategorySection>
-            
-            {/* Procedere */}
-            <CategorySection 
-              letter="P" 
-              bgColor="bg-blue-100" 
-              textColor="text-blue-800"
-              title="Procedere"
-              content="Another string"
-            >
-              <></>
-            </CategorySection>
-            
-            {/* Folgetermin */}
-            <CategorySection 
-              letter="F" 
-              bgColor="bg-teal-100" 
-              textColor="text-teal-800"
-              title="Folgetermin"
-              content=""
-              expandable={true}
-            >
-              <div className="bg-amber-50 text-gray-800 py-1 px-3 rounded-md inline-flex items-center mr-2 mb-2">
-                Erkältung
-                <X className="ml-2 h-4 w-4 text-gray-500" />
-              </div>
-            </CategorySection>
-          </div>
-        </AccordionItem>
+        {/* First section removed - No more Anamnese, Befund, Procedere, Folgetermin */}
         
         {/* Second section - Encounter & Diagnostics */}
         <AccordionItem value="encounter" className="border rounded-lg overflow-hidden">
@@ -422,79 +370,7 @@ const PatientDashboard = () => {
         Neuen Eintrag einfügen
       </button>
       
-      {/* Diagnosen section remains for compatibility */}
-      <CategorySection 
-        letter="D" 
-        bgColor="bg-orange-100" 
-        textColor="text-orange-800"
-        title="Diagnosen"
-        content=""
-        expandable={true}
-      >
-        <div className="mt-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 text-gray-400 h-4 w-4" />
-            <Input 
-              className="pl-10 py-2 bg-white" 
-              placeholder="Diagnose suchen"
-            />
-          </div>
-          
-          <div className="mt-3 border-l-4 border-amber-300 pl-3 py-1 mb-3">
-            <div className="flex justify-between">
-              <div>
-                <span className="font-bold">J30.1</span> Allergische Rhinopathie durch Pollen
-              </div>
-              <div className="flex items-center">
-                <span className="text-green-700 font-bold mr-2">DD</span>
-                <span className="text-gray-500 mr-2">Gesichert</span>
-                <X className="h-4 w-4 text-gray-500" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-l-4 border-amber-300 pl-3 py-1">
-            <div className="flex justify-between">
-              <div>
-                <span className="font-bold">J06.9</span> Akute Infektion der oberen Atemwege, nicht näh...
-              </div>
-              <div className="flex items-center">
-                <span className="text-gray-500 mr-2">Gesichert</span>
-                <X className="h-4 w-4 text-gray-500" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </CategorySection>
-      
-      {/* Leistung section remains for compatibility */}
-      <CategorySection 
-        letter="L" 
-        bgColor="bg-purple-100" 
-        textColor="text-purple-800"
-        title="Leistung"
-        content=""
-        expandable={true}
-      >
-        <div className="mt-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 text-gray-400 h-4 w-4" />
-            <Input 
-              className="pl-10 py-2 bg-white" 
-              placeholder="Leistung suchen"
-            />
-          </div>
-          
-          <div className="mt-3 border-l-4 border-purple-200 pl-3 py-1">
-            <div className="flex justify-between">
-              <div>
-                <span className="font-bold">03000</span> Versichertenpauschale
-              </div>
-              <X className="h-4 w-4 text-gray-500" />
-            </div>
-          </div>
-        </div>
-      </CategorySection>
+      {/* "Diagnosen" and "Leistung" sections removed as they were related to the removed categories */}
       
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 p-4 flex justify-between items-center bg-white border-t">
@@ -505,56 +381,6 @@ const PatientDashboard = () => {
         <Button className="px-10 py-6 bg-white border border-teal-700 text-teal-700 hover:bg-teal-50">
           Speichern
         </Button>
-      </div>
-    </div>
-  );
-};
-
-// Component for each category section
-const CategorySection = ({ 
-  letter, 
-  bgColor, 
-  textColor, 
-  title, 
-  content, 
-  hasAttachment = false,
-  expandable = false,
-  children 
-}) => {
-  const [expanded, setExpanded] = useState(true);
-  
-  return (
-    <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-      <div className="flex">
-        {/* Letter indicator */}
-        <div className={`w-10 h-10 flex items-center justify-center text-lg font-bold ${bgColor} ${textColor}`}>
-          {letter}
-        </div>
-        
-        {/* Content area */}
-        <div className="flex-1 p-4">
-          <div className="flex justify-between items-center">
-            <h2 className="font-semibold text-gray-800">{title}</h2>
-            {expandable && (
-              <button onClick={() => setExpanded(!expanded)}>
-                <ChevronDown className={`h-5 w-5 text-gray-500 transform transition-transform ${expanded ? 'rotate-180' : ''}`} />
-              </button>
-            )}
-          </div>
-          
-          {content && (
-            <div className="flex justify-between mt-1">
-              <p className="text-gray-600">{content}</p>
-              {hasAttachment && <Paperclip className="h-5 w-5 text-gray-500" />}
-            </div>
-          )}
-          
-          {expanded && children && (
-            <div className="mt-2">
-              {children}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
