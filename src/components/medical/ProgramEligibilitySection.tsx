@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CheckCircle, XCircle } from 'lucide-react';
+import EditableSection from './EditableSection';
 
 interface ProgramEligibilityProps {
   programEligibility: {
@@ -35,30 +35,25 @@ const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programE
   ];
 
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Program Eligibility</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-3">
-          {eligibilityItems.map((item) => (
-            <div key={item.key} className="flex items-center">
-              {programEligibility[item.key as keyof typeof programEligibility] ? (
-                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-              ) : (
-                <XCircle className="h-5 w-5 text-gray-300 mr-2" />
-              )}
-              <span className={programEligibility[item.key as keyof typeof programEligibility] 
-                ? 'font-medium' 
-                : 'text-gray-500'
-              }>
-                {item.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <EditableSection title="Program Eligibility">
+      <div className="grid grid-cols-2 gap-3">
+        {eligibilityItems.map((item) => (
+          <div key={item.key} className="flex items-center">
+            {programEligibility[item.key as keyof typeof programEligibility] ? (
+              <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+            ) : (
+              <XCircle className="h-5 w-5 text-gray-300 mr-2" />
+            )}
+            <span className={programEligibility[item.key as keyof typeof programEligibility] 
+              ? 'font-medium' 
+              : 'text-gray-500'
+            }>
+              {item.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </EditableSection>
   );
 };
 

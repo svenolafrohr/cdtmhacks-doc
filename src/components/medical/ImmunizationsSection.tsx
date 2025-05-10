@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import EditableSection from './EditableSection';
 
 interface ImmunizationsProps {
   immunizations: Array<{
@@ -27,38 +27,33 @@ const ImmunizationsSection: React.FC<ImmunizationsProps> = ({ immunizations, col
   if (!immunizations || immunizations.length === 0) return null;
 
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Immunizations</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {immunizations.map((immunization, index) => (
-            <div key={index} className="pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
-              <div className="flex justify-between items-start mb-1">
-                <span className="font-medium text-gray-900">{immunization.disease}</span>
-                <span className="text-sm text-gray-500">{immunization.date}</span>
-              </div>
-              
-              <div className="mt-1">
-                <div className="text-sm text-gray-700">
-                  Vaccine: {immunization.vaccine_name}
-                </div>
-                <div className="text-sm text-gray-500">
-                  Batch: {immunization.batch_number} (Best before: {immunization.best_before})
-                </div>
-                <div className="text-sm text-gray-500 mt-1">
-                  Doctor: {immunization.doctor_name}
-                </div>
-                {immunization.details && (
-                  <div className="text-sm text-gray-700 mt-1">{immunization.details}</div>
-                )}
-              </div>
+    <EditableSection title="Immunizations">
+      <div className="space-y-4">
+        {immunizations.map((immunization, index) => (
+          <div key={index} className="pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
+            <div className="flex justify-between items-start mb-1">
+              <span className="font-medium text-gray-900">{immunization.disease}</span>
+              <span className="text-sm text-gray-500">{immunization.date}</span>
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+            
+            <div className="mt-1">
+              <div className="text-sm text-gray-700">
+                Vaccine: {immunization.vaccine_name}
+              </div>
+              <div className="text-sm text-gray-500">
+                Batch: {immunization.batch_number} (Best before: {immunization.best_before})
+              </div>
+              <div className="text-sm text-gray-500 mt-1">
+                Doctor: {immunization.doctor_name}
+              </div>
+              {immunization.details && (
+                <div className="text-sm text-gray-700 mt-1">{immunization.details}</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </EditableSection>
   );
 };
 

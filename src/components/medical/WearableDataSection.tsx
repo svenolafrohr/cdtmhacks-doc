@@ -1,8 +1,7 @@
-
 import React, { useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import EditableSection from './EditableSection';
 
 interface WearableDataProps {
   wearableObservations: {
@@ -93,57 +92,52 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
   };
   
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Wearable Data</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {samples && samples.length > 0 ? (
-          <>
-            <div className="h-64 mb-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip 
-                    formatter={(value, name, props) => {
-                      const unit = props.payload[`${name}Unit`];
-                      return [`${value} ${unit}`, name];
-                    }}
+    <EditableSection title="Wearable Data">
+      {samples && samples.length > 0 ? (
+        <>
+          <div className="h-64 mb-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip 
+                  formatter={(value, name, props) => {
+                    const unit = props.payload[`${name}Unit`];
+                    return [`${value} ${unit}`, name];
+                  }}
+                />
+                <Legend />
+                {measurementTypes.map((type) => (
+                  <Line 
+                    key={type} 
+                    type="monotone" 
+                    dataKey={type} 
+                    stroke={typeColors[type as keyof typeof typeColors] || colorScheme?.text || '#8884d8'} 
+                    activeDot={{ r: 8 }} 
+                    name={type}
                   />
-                  <Legend />
-                  {measurementTypes.map((type) => (
-                    <Line 
-                      key={type} 
-                      type="monotone" 
-                      dataKey={type} 
-                      stroke={typeColors[type as keyof typeof typeColors] || colorScheme?.text || '#8884d8'} 
-                      activeDot={{ r: 8 }} 
-                      name={type}
-                    />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            
-            <div className="space-y-2">
-              {measurementTypes.map((type) => (
-                <div key={type} className="text-sm">
-                  <span 
-                    className="inline-block w-3 h-3 rounded-full mr-2" 
-                    style={{ backgroundColor: typeColors[type as keyof typeof typeColors] || colorScheme?.text || '#8884d8' }}
-                  />
-                  <span className="font-medium">{type}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="py-6 text-center text-gray-500">No wearable data recorded</div>
-        )}
-      </CardContent>
-    </Card>
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="space-y-2">
+            {measurementTypes.map((type) => (
+              <div key={type} className="text-sm">
+                <span 
+                  className="inline-block w-3 h-3 rounded-full mr-2" 
+                  style={{ backgroundColor: typeColors[type as keyof typeof typeColors] || colorScheme?.text || '#8884d8' }}
+                />
+                <span className="font-medium">{type}</span>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="py-6 text-center text-gray-500">No wearable data recorded</div>
+      )}
+    </EditableSection>
   );
 };
 

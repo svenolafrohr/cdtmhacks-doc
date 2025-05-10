@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
@@ -10,7 +11,7 @@ const ImportPage = () => {
   const { id } = useParams();
   const { toast: shadcnToast } = useToast();
   
-  // Create sample JSON data to mimic HL7 FHIR MIO objects
+  // Create FHIR MIO data that conforms to the specified format
   const fhirData = {
     resourceType: "Bundle",
     id: "bundle-transaction",

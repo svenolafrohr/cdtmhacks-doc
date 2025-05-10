@@ -9,7 +9,7 @@ const DashboardHeader = () => {
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center">
           <div className="w-10 h-2 bg-teal-600 mr-2"></div>
-          <h1 className="text-lg font-medium text-gray-800">MediRecord</h1>
+          <h1 className="text-lg font-medium text-gray-800">PatientOnboarding</h1>
         </div>
         
         <div className="flex items-center gap-3">
