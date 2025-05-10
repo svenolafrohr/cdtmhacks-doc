@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { SquarePen } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface OpenQuestionsProps {
   openQuestions: Array<{
@@ -14,10 +15,7 @@ const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions }) =
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex items-center">
-          <SquarePen className="h-5 w-5 mr-2 text-amber-500" />
-          <CardTitle className="text-lg font-semibold">Open Questions</CardTitle>
-        </div>
+        <CardTitle className="text-lg font-semibold">Open Questions</CardTitle>
       </CardHeader>
       <CardContent>
         {openQuestions && openQuestions.length > 0 ? (
@@ -25,9 +23,25 @@ const OpenQuestionsSection: React.FC<OpenQuestionsProps> = ({ openQuestions }) =
             {openQuestions.map((item) => (
               <div 
                 key={item.question_id} 
-                className="p-3 bg-amber-50 border border-amber-100 rounded-md"
+                className="p-3 bg-amber-50 border border-amber-100 rounded-md flex justify-between items-center"
               >
                 <p className="text-amber-800">{item.questions}</p>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                  >
+                    <Check className="h-5 w-5" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

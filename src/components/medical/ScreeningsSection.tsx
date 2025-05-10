@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ShieldX } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 interface ScreeningsProps {
@@ -19,7 +18,9 @@ const ScreeningsSection: React.FC<ScreeningsProps> = ({ procedures }) => {
     <Card className="mb-4">
       <CardHeader className="pb-2">
         <div className="flex items-center">
-          <ShieldX className="h-5 w-5 mr-2 text-amber-500" />
+          <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+            S
+          </div>
           <CardTitle className="text-lg font-semibold">Screenings</CardTitle>
         </div>
       </CardHeader>

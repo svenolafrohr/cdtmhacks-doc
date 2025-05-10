@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
-import { Search, Paperclip, ChevronDown, X, Mic, ArrowLeft, Calendar, SquarePen } from 'lucide-react';
+import { Search, Paperclip, ChevronDown, X, Mic, ArrowLeft, Calendar } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -375,10 +375,7 @@ const PatientDashboard = () => {
         {/* Assessment & Plan Section (with Open Questions) */}
         <AccordionItem value="assessment-plan" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <div className="flex items-center">
-              <SquarePen className="h-5 w-5 mr-2 text-teal-600" />
-              <span className="text-lg font-medium">Procedere</span>
-            </div>
+            <span className="text-lg font-medium">Procedere</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">

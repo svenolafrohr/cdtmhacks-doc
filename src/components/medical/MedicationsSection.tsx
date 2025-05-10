@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Pill } from 'lucide-react';
 
 interface MedicationsProps {
   medications: Array<{
@@ -30,7 +29,9 @@ const MedicationsSection: React.FC<MedicationsProps> = ({ medications }) => {
     <Card className="mb-4">
       <CardHeader className="pb-2">
         <div className="flex items-center">
-          <Pill className="h-5 w-5 mr-2 text-teal-600" />
+          <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+            M
+          </div>
           <CardTitle className="text-lg font-semibold">Medications</CardTitle>
         </div>
       </CardHeader>
