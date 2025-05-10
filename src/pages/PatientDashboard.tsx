@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
@@ -266,65 +265,97 @@ const PatientDashboard = () => {
         </div>
       </div>
       
-      {/* Medical categories */}
-      <Accordion type="multiple" className="space-y-4 mt-4" defaultValue={["encounter", "medical-history", "patient-context", "care-team"]}>
-        {/* First section - Encounter & Diagnostics */}
-        <AccordionItem value="encounter" className="border rounded-lg overflow-hidden">
+      {/* Medical categories - reorganized according to request */}
+      <Accordion type="multiple" className="space-y-4 mt-4" defaultValue={["anamnesis", "testing", "medication", "diagnoses", "patient-context", "open-questions", "assessment-plan"]}>
+        {/* Anamnesis Section */}
+        <AccordionItem value="anamnesis" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Encounter & Diagnostics</span>
+            <span className="text-lg font-medium">Anamnese</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
               <EncounterSection encounter={encounter} />
-              <DiagnosesSection diagnoses={diagnoses} />
-              <VitalSignsSection vitalSigns={vital_signs} />
-              <ObservationsSection observations={observations} />
+              <AllergiesSection allergies={allergies} />
+              <FamilyHistorySection familyHistory={family_history} />
+              <SocialHistorySection socialHistory={social_history} />
               <ReviewOfSystemsSection reviewOfSystems={review_of_systems} />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
+        {/* Testing Section */}
+        <AccordionItem value="testing" className="border rounded-lg overflow-hidden">
+          <AccordionTrigger className="px-4 py-2 hover:no-underline">
+            <span className="text-lg font-medium">Vorbefunde</span>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 py-3">
+            <div className="space-y-6">
+              <VitalSignsSection vitalSigns={vital_signs} />
               <LabResultsSection labResults={labs} />
+              <ObservationsSection observations={observations} />
+              <ProceduresSection procedures={procedures} />
               <WearableDataSection wearableObservations={wearable_observations} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
-        {/* Second section - Medical History */}
-        <AccordionItem value="medical-history" className="border rounded-lg overflow-hidden">
+        {/* Medication Section */}
+        <AccordionItem value="medication" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Medical History</span>
+            <span className="text-lg font-medium">Dauermedikation</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <MedicalHistorySection medicalHistory={prior_med_history} />
-              <AllergiesSection allergies={allergies} />
               <MedicationsSection medications={medications} />
-              <ImmunizationsSection immunizations={immunizations} />
-              <ProceduresSection procedures={procedures} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
-        {/* Third section - Patient Context */}
+        {/* Diagnoses Section */}
+        <AccordionItem value="diagnoses" className="border rounded-lg overflow-hidden">
+          <AccordionTrigger className="px-4 py-2 hover:no-underline">
+            <span className="text-lg font-medium">Diagnosen</span>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 py-3">
+            <div className="space-y-6">
+              <DiagnosesSection diagnoses={diagnoses} />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
+        {/* Patient Context Section */}
         <AccordionItem value="patient-context" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Patient Context</span>
+            <span className="text-lg font-medium">Organisatorisches</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <FamilyHistorySection familyHistory={family_history} />
-              <SocialHistorySection socialHistory={social_history} />
+              <ImmunizationsSection immunizations={immunizations} />
               <ProgramEligibilitySection programEligibility={program_eligibility} />
+              <PractitionersSection practitioners={practitioners} />
             </div>
           </AccordionContent>
         </AccordionItem>
         
-        {/* Fourth section - Care Team & Plan */}
-        <AccordionItem value="care-team" className="border rounded-lg overflow-hidden">
+        {/* Open Questions Section */}
+        <AccordionItem value="open-questions" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Care Team & Plan</span>
+            <span className="text-lg font-medium">Offene Fragen</span>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
-              <PractitionersSection practitioners={practitioners} />
               <OpenQuestionsSection openQuestions={open_questions} />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        
+        {/* Assessment & Plan Section */}
+        <AccordionItem value="assessment-plan" className="border rounded-lg overflow-hidden">
+          <AccordionTrigger className="px-4 py-2 hover:no-underline">
+            <span className="text-lg font-medium">Procedere</span>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 py-3">
+            <div className="space-y-6">
               <AssessmentPlanSection 
                 assessment={assessment} 
                 plan={plan} 
