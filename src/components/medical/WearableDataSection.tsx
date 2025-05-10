@@ -1,22 +1,28 @@
-
 import React, { useMemo } from 'react';
 import { formatDate } from '@/lib/utils';
 import EditableSection from './EditableSection';
 import WearableDataChart from './WearableDataChart';
 
+interface WearableDataPoint {
+  date: string;
+  type: string;
+  unit: string;
+  value: number;
+  device: string;
+  source: string;
+  measurement_type?: string;
+  datetime?: string;
+  level?: number;
+  systolic?: number;
+  diastolic?: number;
+  metadata?: {
+    HKMetadataKeyHeartRateMotionContext?: number;
+  };
+}
+
 interface WearableDataProps {
-  wearableObservations: {
-    samples?: Array<{
-      date: string;
-      type: string;
-      unit: string;
-      value: number;
-      device: string;
-      source: string;
-      metadata?: {
-        HKMetadataKeyHeartRateMotionContext?: number;
-      };
-    }>;
+  wearableObservations: WearableDataPoint[] | {
+    samples?: WearableDataPoint[];
   };
   colorScheme?: {
     bg: string;
@@ -28,25 +34,56 @@ interface WearableDataProps {
 }
 
 const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations, colorScheme }) => {
-  const { samples = [] } = wearableObservations || {};
+  // Handle both array and object with samples property formats
+  const samples = useMemo(() => {
+    if (!wearableObservations) return [];
+    
+    // If wearableObservations is an array, use it directly
+    if (Array.isArray(wearableObservations)) {
+      return wearableObservations;
+    }
+    
+    // Otherwise, try to access the samples property if it exists
+    return (wearableObservations as { samples?: WearableDataPoint[] }).samples || [];
+  }, [wearableObservations]);
+  
+  // Transform data points to a consistent format
+  const normalizedSamples = useMemo(() => {
+    return samples.map(sample => {
+      return {
+        date: sample.date || sample.datetime || new Date().toISOString(),
+        type: sample.type || sample.measurement_type || 'Unknown',
+        unit: sample.unit || '',
+        value: sample.value !== undefined ? sample.value : sample.level || 0,
+        device: sample.device || 'Unknown',
+        source: sample.source || 'Unknown',
+        metadata: sample.metadata,
+        // Handle blood pressure specially
+        ...(sample.measurement_type === 'blood pressure' && {
+          systolic: sample.systolic,
+          diastolic: sample.diastolic
+        })
+      };
+    });
+  }, [samples]);
   
   // Group data by measurement type for graphing
   const groupedByType = useMemo(() => {
-    if (!samples || samples.length === 0) return {};
+    if (!normalizedSamples || normalizedSamples.length === 0) return {};
     
-    return samples.reduce((acc, sample) => {
+    return normalizedSamples.reduce((acc, sample) => {
       const type = sample.type || 'Unknown';
       if (!acc[type]) {
         acc[type] = [];
       }
       acc[type].push(sample);
       return acc;
-    }, {} as Record<string, typeof samples>);
-  }, [samples]);
+    }, {} as Record<string, typeof normalizedSamples>);
+  }, [normalizedSamples]);
 
   return (
     <EditableSection title="Wearable Data">
-      {samples && samples.length > 0 ? (
+      {normalizedSamples && normalizedSamples.length > 0 ? (
         <div className="space-y-8">
           {Object.entries(groupedByType).map(([type, data], index) => (
             <div key={index} className="mb-6 last:mb-0">
