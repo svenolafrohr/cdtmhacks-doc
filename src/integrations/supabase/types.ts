@@ -9,7 +9,161 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      documents: {
+        Row: {
+          created_at: string
+          id: string
+          patient_record: string
+          summary: string | null
+          type: string | null
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          patient_record: string
+          summary?: string | null
+          type?: string | null
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          patient_record?: string
+          summary?: string | null
+          type?: string | null
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_patient_record_fkey"
+            columns: ["patient_record"]
+            isOneToOne: false
+            referencedRelation: "patient_record"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_record: {
+        Row: {
+          address: Json | null
+          allergies: Json | null
+          assessment: Json | null
+          created_at: string
+          diagnoses: Json | null
+          dob: string | null
+          encounter: Json | null
+          family_history: Json | null
+          first_name: string | null
+          id: string
+          immunizations: Json | null
+          insurance: Json | null
+          labs: Json | null
+          last_name: string | null
+          medications: Json | null
+          observations: Json | null
+          open_questions: Json | null
+          other_insurance_card_data: Json | null
+          pat_id: string
+          plan: Json | null
+          practitioners: Json | null
+          prior_med_history: Json | null
+          procedures: Json | null
+          program_eligibility: Json | null
+          review_of_systems: Json | null
+          social_history: Json | null
+          vital_signs: Json | null
+          wearable_observations: Json | null
+        }
+        Insert: {
+          address?: Json | null
+          allergies?: Json | null
+          assessment?: Json | null
+          created_at?: string
+          diagnoses?: Json | null
+          dob?: string | null
+          encounter?: Json | null
+          family_history?: Json | null
+          first_name?: string | null
+          id?: string
+          immunizations?: Json | null
+          insurance?: Json | null
+          labs?: Json | null
+          last_name?: string | null
+          medications?: Json | null
+          observations?: Json | null
+          open_questions?: Json | null
+          other_insurance_card_data?: Json | null
+          pat_id: string
+          plan?: Json | null
+          practitioners?: Json | null
+          prior_med_history?: Json | null
+          procedures?: Json | null
+          program_eligibility?: Json | null
+          review_of_systems?: Json | null
+          social_history?: Json | null
+          vital_signs?: Json | null
+          wearable_observations?: Json | null
+        }
+        Update: {
+          address?: Json | null
+          allergies?: Json | null
+          assessment?: Json | null
+          created_at?: string
+          diagnoses?: Json | null
+          dob?: string | null
+          encounter?: Json | null
+          family_history?: Json | null
+          first_name?: string | null
+          id?: string
+          immunizations?: Json | null
+          insurance?: Json | null
+          labs?: Json | null
+          last_name?: string | null
+          medications?: Json | null
+          observations?: Json | null
+          open_questions?: Json | null
+          other_insurance_card_data?: Json | null
+          pat_id?: string
+          plan?: Json | null
+          practitioners?: Json | null
+          prior_med_history?: Json | null
+          procedures?: Json | null
+          program_eligibility?: Json | null
+          review_of_systems?: Json | null
+          social_history?: Json | null
+          vital_signs?: Json | null
+          wearable_observations?: Json | null
+        }
+        Relationships: []
+      }
+      test_table_fk: {
+        Row: {
+          created_at: string
+          file_content: Json | null
+          file_name: string | null
+          file_type: string | null
+          id: number
+          text_field_custom: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_content?: Json | null
+          file_name?: string | null
+          file_type?: string | null
+          id?: number
+          text_field_custom?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_content?: Json | null
+          file_name?: string | null
+          file_type?: string | null
+          id?: number
+          text_field_custom?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -6,49 +6,47 @@ import {
   Calendar, 
   ClipboardCheck, 
   BarChart, 
-  Settings
+  Settings,
+  FileText,
+  FilePlus,
+  Clock
 } from 'lucide-react';
 
-interface SidebarLinkProps {
-  to: string;
-  icon: React.ElementType;
-  label: string;
-}
-
-const SidebarLink = ({ to, icon: Icon, label }: SidebarLinkProps) => {
+const DashboardSidebar = () => {
+  // Simplified sidebar that's less prominent to match the reference design
   return (
-    <NavLink 
-      to={to} 
-      className={({ isActive }) => 
-        `flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-colors ${
-          isActive 
-            ? 'bg-medical-accent text-medical-primary' 
-            : 'text-gray-600 hover:bg-gray-100'
-        }`
-      }
-    >
-      <Icon className="h-5 w-5" />
-      <span>{label}</span>
-    </NavLink>
+    <aside className="w-16 bg-gray-50 border-r border-gray-200 hidden md:flex flex-col items-center py-4">
+      <div className="flex flex-col items-center gap-6 mt-4">
+        <SidebarIcon icon={FileText} label="Records" active />
+        <SidebarIcon icon={FilePlus} label="New Record" />
+        <SidebarIcon icon={Users} label="Patients" />
+        <SidebarIcon icon={Clock} label="History" />
+        <SidebarIcon icon={Calendar} label="Calendar" />
+      </div>
+      
+      <div className="mt-auto">
+        <SidebarIcon icon={Settings} label="Settings" />
+      </div>
+    </aside>
   );
 };
 
-const DashboardSidebar = () => {
+const SidebarIcon = ({ icon: Icon, label, active = false }) => {
   return (
-    <aside className="w-64 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 flex flex-col">
-      <div className="p-4">
-        <nav className="space-y-1">
-          <SidebarLink to="/patients" icon={Users} label="Patients" />
-          <SidebarLink to="/appointments" icon={Calendar} label="Appointments" />
-          <SidebarLink to="/visits" icon={ClipboardCheck} label="Visits" />
-          <SidebarLink to="/analytics" icon={BarChart} label="Analytics" />
-        </nav>
+    <div className="relative group">
+      <div 
+        className={`
+          flex items-center justify-center w-10 h-10 rounded-lg 
+          ${active ? 'bg-teal-100 text-teal-700' : 'text-gray-500 hover:bg-gray-100'}
+          transition-colors
+        `}
+      >
+        <Icon className="h-5 w-5" />
       </div>
-      
-      <div className="mt-auto p-4 border-t border-gray-200">
-        <SidebarLink to="/settings" icon={Settings} label="Settings" />
+      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded hidden group-hover:block whitespace-nowrap">
+        {label}
       </div>
-    </aside>
+    </div>
   );
 };
 
