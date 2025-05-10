@@ -56,18 +56,18 @@ const ProgramEligibilitySection: React.FC<ProgramEligibilityProps> = ({ programE
                 <input 
                   type="checkbox"
                   id={item.key}
-                  checked={programEligibility[item.key as keyof typeof programEligibility] || false}
+                  checked={Boolean(programEligibility[item.key as keyof typeof programEligibility])}
                   onChange={(e) => onChange(item.key, e.target.checked)}
                   className="mr-2"
                 />
               ) : (
-                programEligibility[item.key as keyof typeof programEligibility] ? (
+                Boolean(programEligibility[item.key as keyof typeof programEligibility]) ? (
                   <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
                 ) : (
                   <XCircle className="h-5 w-5 text-gray-300 mr-2" />
                 )
               )}
-              <span className={programEligibility[item.key as keyof typeof programEligibility] 
+              <span className={Boolean(programEligibility[item.key as keyof typeof programEligibility]) 
                 ? 'font-medium' 
                 : 'text-gray-500'
               }>
