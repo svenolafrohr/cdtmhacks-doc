@@ -1,11 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { parseJsonbField } from '@/lib/utils';
-import { Search, Paperclip, ChevronDown, X, Mic, ArrowLeft, Calendar } from 'lucide-react';
+import { Search, ChevronDown, Mic, ArrowLeft, Activity, Table, Pill, FileText, Folder, ClipboardPen } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 
@@ -305,7 +305,12 @@ const PatientDashboard = () => {
         {/* Anamnesis Section */}
         <AccordionItem value="anamnesis" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Anamnese</span>
+            <div className="flex items-center">
+              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+                A
+              </div>
+              <span className="text-lg font-medium">Anamnese</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
@@ -321,7 +326,12 @@ const PatientDashboard = () => {
         {/* Testing Section */}
         <AccordionItem value="testing" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Vorbefunde</span>
+            <div className="flex items-center">
+              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+                B
+              </div>
+              <span className="text-lg font-medium">Vorbefunde</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
@@ -337,7 +347,12 @@ const PatientDashboard = () => {
         {/* Medication Section */}
         <AccordionItem value="medication" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Dauermedikation</span>
+            <div className="flex items-center">
+              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+                M
+              </div>
+              <span className="text-lg font-medium">Dauermedikation</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
@@ -349,7 +364,12 @@ const PatientDashboard = () => {
         {/* Diagnoses Section */}
         <AccordionItem value="diagnoses" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Diagnosen</span>
+            <div className="flex items-center">
+              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+                D
+              </div>
+              <span className="text-lg font-medium">Diagnosen</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
@@ -361,7 +381,12 @@ const PatientDashboard = () => {
         {/* Patient Context Section */}
         <AccordionItem value="patient-context" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Organisatorisches</span>
+            <div className="flex items-center">
+              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+                O
+              </div>
+              <span className="text-lg font-medium">Organisatorisches</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">
@@ -375,7 +400,12 @@ const PatientDashboard = () => {
         {/* Assessment & Plan Section (with Open Questions) */}
         <AccordionItem value="assessment-plan" className="border rounded-lg overflow-hidden">
           <AccordionTrigger className="px-4 py-2 hover:no-underline">
-            <span className="text-lg font-medium">Procedere</span>
+            <div className="flex items-center">
+              <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
+                P
+              </div>
+              <span className="text-lg font-medium">Procedere</span>
+            </div>
           </AccordionTrigger>
           <AccordionContent className="px-4 py-3">
             <div className="space-y-6">

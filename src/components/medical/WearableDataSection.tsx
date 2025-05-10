@@ -2,6 +2,18 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  ReferenceLine
+} from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 
 interface WearableSample {
   date: string;
@@ -88,6 +100,94 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
     acc[measurementType].push(transformedItem);
     return acc;
   }, {});
+  
+  // Prepare chart data
+  const prepareChartData = (dataArray: any[]) => {
+    return dataArray
+      .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
+      .map(item => {
+        return {
+          date: item.datetime,
+          value: item.frequency || item.level,
+          unit: item.unit
+        };
+      });
+  };
+  
+  // Get chart configuration based on measurement type
+  const getChartConfig = (type: string) => {
+    switch(type) {
+      case 'heart_rate':
+        return {
+          color: '#ef4444',
+          refValue: 75,
+          refLabel: 'Normal resting rate',
+          yAxisDomain: [40, 180],
+          unit: 'bpm'
+        };
+      case 'blood_pressure':
+        return {
+          color: '#3b82f6',
+          refValue: 120,
+          refLabel: 'Normal systolic',
+          yAxisDomain: [60, 180],
+          unit: 'mmHg'
+        };
+      default:
+        return {
+          color: '#8b5cf6',
+          yAxisDomain: ['auto', 'auto'],
+          unit: ''
+        };
+    }
+  };
+
+  const renderWearableChart = (type: string, dataArray: any[]) => {
+    const chartData = prepareChartData(dataArray);
+    const config = getChartConfig(type);
+    
+    // Skip charts if there's not enough data
+    if (chartData.length < 2) return null;
+    
+    return (
+      <div className="h-64 mt-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="date" 
+              tickFormatter={(value) => formatDate(value).split(',')[0]} 
+              tick={{ fontSize: 12 }}
+            />
+            <YAxis 
+              domain={config.yAxisDomain} 
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip 
+              formatter={(value: number) => [`${value} ${config.unit || chartData[0]?.unit || ''}`, '']}
+              labelFormatter={(label) => formatDate(label).split(',')[0]}
+            />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="value" 
+              stroke={config.color} 
+              activeDot={{ r: 8 }}
+              name={type.replace('_', ' ')}
+            />
+            {config.refValue && (
+              <ReferenceLine 
+                y={config.refValue} 
+                stroke={config.color} 
+                strokeDasharray="3 3" 
+                label={{ value: config.refLabel, fill: config.color, fontSize: 12 }}
+              />
+            )}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  };
 
   const renderWearableData = (data: any) => {
     switch (data.measurement_type) {
@@ -140,13 +240,16 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
       </CardHeader>
       <CardContent>
         {Object.entries(groupedData).map(([type, data]) => (
-          <div key={type} className="mb-4 last:mb-0">
+          <div key={type} className="mb-6 last:mb-0">
             <h4 className="font-medium text-gray-900 mb-2 capitalize">
               {type.replace('_', ' ')}
             </h4>
             
-            <div className="space-y-3">
-              {data.map((item, index) => (
+            {/* Add chart visualization */}
+            {renderWearableChart(type, data)}
+            
+            <div className="space-y-3 mt-3">
+              {data.slice(0, 3).map((item, index) => (
                 <div key={index} className="flex justify-between items-start pb-2 border-b border-gray-100 last:border-b-0">
                   <div>
                     {renderWearableData(item)}
@@ -155,10 +258,15 @@ const WearableDataSection: React.FC<WearableDataProps> = ({ wearableObservations
                     )}
                   </div>
                   <span className="text-sm text-gray-500">
-                    {item.datetime ? formatDate(item.datetime) : 'Date not available'}
+                    {item.datetime ? formatDate(item.datetime).split(',')[0] : 'Date not available'}
                   </span>
                 </div>
               ))}
+              {data.length > 3 && (
+                <div className="text-xs text-gray-500 text-center">
+                  + {data.length - 3} more measurements
+                </div>
+              )}
             </div>
           </div>
         ))}

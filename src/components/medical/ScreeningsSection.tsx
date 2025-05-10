@@ -17,12 +17,7 @@ const ScreeningsSection: React.FC<ScreeningsProps> = ({ procedures }) => {
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
-        <div className="flex items-center">
-          <div className="w-12 h-12 flex items-center justify-center bg-amber-50 text-amber-800 font-bold text-2xl rounded-md mr-3">
-            S
-          </div>
-          <CardTitle className="text-lg font-semibold">Screenings</CardTitle>
-        </div>
+        <CardTitle className="text-lg font-semibold">Screenings</CardTitle>
       </CardHeader>
       <CardContent>
         {procedures && procedures.length > 0 ? (
