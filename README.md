@@ -181,7 +181,7 @@ observations: [ //eg. ECG, XRAY
 ```
 
 ## mapping to HL7 FHIR MIO objects
-- to provide the functional FHIR API, we still need to build an edge function, that maps our internal database schema to the MIO objects
+- to provide the functional FHIR API, we still need to build an edge function, that maps our internal database schema to the MIO objects (wasn't feasible within hackathon)
 
 
 ## What technologies are used for this project?
