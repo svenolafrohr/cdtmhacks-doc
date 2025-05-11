@@ -1,57 +1,194 @@
-# Welcome to your Lovable project
+# Avi medical doctor Fronend
+CDTM hacks 2025, milana + freddy + max + sven
 
-## Project info
+## database schema (flattened JSON)
+```json
+encounter: {
+    visit_date: "ISO-date-time",
+    chief_complaint: "string",
+    history_of_present_illness: "string"
+  },
 
-**URL**: https://lovable.dev/projects/941df50e-34ae-49dc-a4b8-acb4eca23028
 
-## How can I edit this code?
+prior_med_history: [
+    {
+      event_datetime: "ISO-date-time",
+      event_type: "string",
+      event_details: "string"
+    }
+  ],
 
-There are several ways of editing your application.
+diagnoses: [
+    {
+      diagnosis_date: "ISO-date-time",
+      diagnosis_name: "string",
+      icd10_code: "string",
+      diagnosis_details: "string"
+    }
+  ],
 
-**Use Lovable**
+medications: [
+    {
+      name: "string",
+      dose: "string",
+      amount_morning: integer,
+      amount_noon: integer,
+      amount_evening: integer,
+      amount_night: integer,
+      comment: "string"
+    }
+  ],
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/941df50e-34ae-49dc-a4b8-acb4eca23028) and start prompting.
+allergies: [
+    {
+      name: "string",
+      icd10_code: "string"
+      datetime: "datetime"
+      details: "text"
+    }
+  ],
 
-Changes made via Lovable will be committed automatically to this repo.
 
-**Use your preferred IDE**
+family_history: [
+    {
+      relative_name: "string",
+      history: "string"
+    }
+  ],
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+social_history: [
+    {
+      patient_id: "uuid",
+      drinking: "string",
+      smoking: "string",
+      drugs: "string",
+      marital_status: "string",
+      kids: integer,
+      job: "string"
+    }
+  ],
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+review_of_systems: [
+    {
+      system_name: "string",
+      details: "string"
+    }
+  ],
 
-Follow these steps:
+vital_signs: {
+    datetime: "ISO-date-time",
+    weight: "integer",
+    height: integer,
+    bmi: integer
+  },
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+lab_results: [
+    {
+      datetime: "ISO-date-time",
+      analyte: "string",
+      level: integer,
+      unit: "string",
+      method: "string",
+      ref_range_lower: integer,
+      ref_range_upper: integer,
+      is_abnormal: boolean,
+      lab_provider: {
+        name: "string",
+        address: "string"
+      }
+    }
+  ],
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+observations: [ //eg. ECG, XRAY
+    {
+      datetime: "ISO-date-time",
+      type: "string",
+      result: "string"
+    }
+  ],
 
-# Step 3: Install the necessary dependencies.
-npm i
+  wearable_observations: [
+    {
+      measurement_type: "string",
+      datetime: "ISO-date-time",
+      systolic: integer,
+      diastolic: integer,
+      frequency: integer,
+      analyte: "string",
+      level: integer,
+      unit: "string",
+      method: "string",
+      ref_range_lower: integer,
+      ref_range_upper: integer,
+      is_abnormal: boolean,
+    }
+  ],
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+  immunizations: [
+    {
+      date: "YYYY-MM-DD",
+      disease: "string",
+      vaccine_name: "string",
+      batch_number: "string",
+      best_before: "YYYY-MM-DD",
+      doctor_name: "string",
+      doctor_address: { /* object */ },
+      details: "string"
+    }
+  ],
+
+  screenings: [
+    {
+      type: "string",
+      date: "YYYY-MM-DD",
+      details: "string"
+    }
+  ],
+
+  practitioners: [
+    {
+      last_name: "string",
+      first_name: "string",
+      function: "string",
+    }
+  ],
+
+  program_eligibility: {
+    elig_hzv: boolean,
+    elig_dmp_diabetes: boolean,
+    elig_dmp_asthma: boolean,
+    elig_dmp_copd: boolean,
+    elig_dmp_khk: boolean,
+    elig_dmp_obesity: boolean
+  },
+
+  open_questions: [
+    {
+      question_id: "uuid",
+      questions: "string"
+    }
+  ],
+
+  assessment: {
+    summary: "string"
+  },
+
+  plan: {
+    plan: "string",
+    next_appointment: "ISO-date-time"
+  }
+}
 ```
 
-**Edit a file directly in GitHub**
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
 
-**Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## mapping to HL7 FHIR MIO objects
+- to provide the functional FHIR API, we still need to build an edge function, that maps our internal database schema to the MIO objects
+
 
 ## What technologies are used for this project?
-
 This project is built with:
 
 - Vite
@@ -59,15 +196,3 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/941df50e-34ae-49dc-a4b8-acb4eca23028) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
