@@ -2,7 +2,7 @@
 CDTM hacks 2025, milana + freddy + max + sven
 
 ## database schema (flattened JSON)
-```json
+```
 encounter: {
     visit_date: "ISO-date-time",
     chief_complaint: "string",
